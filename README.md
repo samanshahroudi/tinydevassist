@@ -1,6 +1,6 @@
 # TinyDevAssist — tiny developer-support language model
 
-A reproducible small-language-model engineering portfolio project. **Status: Milestone 3 — Python scaffold and documented seed dataset; training, evaluation, and deployment have not run.**
+A reproducible small-language-model engineering portfolio project. **Status: Milestone 4 — deterministic dataset preparation and held-out splits implemented; training, evaluation, and deployment have not run.**
 
 ## Goal
 Adapt `HuggingFaceTB/SmolLM2-360M-Instruct` using LoRA for concise answers to developer-support questions about Git, Python, HTTP APIs, and backend debugging. Compare it with the unchanged base model, then publish a model card and CPU-friendly Gradio Docker Space.
@@ -28,7 +28,7 @@ The [seed dataset card](data/DATASET_CARD.md) documents 36 project-authored exam
 
 ## Usage
 
-Setup, preparation, training, evaluation, inference, demo, and deployment commands will be added as their implementations are tested. Python 3.11 is the target environment; CUDA is optional for training, while CPU inference is the target for the hosted demo.
+Training, evaluation, inference, demo, and deployment commands will be added as their implementations are tested. Python 3.11 is the target environment; CUDA is optional for training, while CPU inference is the target for the hosted demo.
 
 ## Development environment (Milestone 2)
 
@@ -46,6 +46,29 @@ The `dev`, `train`, and `app` dependency groups are defined in `pyproject.toml`;
 
 ## Seed data (Milestone 3)
 
-The tracked [`data/samples/developer_support_v1.jsonl`](data/samples/developer_support_v1.jsonl) contains **36 illustrative Q&A records** (6 each for Git, Python, HTTP, APIs, debugging, and operations). These were drafted for this project with language-model assistance, are not real support incidents, and require technical review. See [data provenance and license](data/DATASET_CARD.md). **There are no train/validation/test splits yet.** The next milestone will add a deterministic preparation script and leakage tests.
+The tracked [`data/samples/developer_support_v1.jsonl`](data/samples/developer_support_v1.jsonl) contains **36 illustrative Q&A records** (6 each for Git, Python, HTTP, APIs, debugging, and operations). These were drafted for this project with language-model assistance, are not real support incidents, and require technical review. See [data provenance and license](data/DATASET_CARD.md). The preparation script now creates deterministic, category-stratified train/validation/test splits; outputs are intentionally ignored by Git.
 
 The candidate base model is [SmolLM2-360M-Instruct](https://huggingface.co/HuggingFaceTB/SmolLM2-360M-Instruct), which the upstream card labels Apache-2.0. This workspace has not downloaded or executed the model; its latency and memory footprint remain unmeasured.
+
+## Dataset preparation (Milestone 4)
+
+After the editable installation above, run:
+
+```bash
+python prepare_data.py --seed 42
+# Or: make prepare
+python -m pytest -q
+```
+
+The CLI writes ignored `data/processed/{train,validation,test}.jsonl` files and a
+`data/processed/manifest.json` containing source/output SHA-256 hashes, IDs, category counts,
+and the seed. With the tracked 36-record dataset, the split is **24 train / 6 validation / 6 test**,
+with each of the six categories represented **4/1/1**. Run the same command to reproduce the
+bytes; `--input` and `--output-dir` override paths. Validation and test examples must not be
+used for training.
+
+The training records include `messages` in role/content format. Later stages must apply the
+**base tokenizer's actual chat template**; the preparation script does not inject model-specific
+chat tokens. See [data preparation and leakage policy](data/README.md) and
+[decision ADR-009](docs/decisions.md). This seed set is illustrative and **does not provide
+independent evidence of generalization**.

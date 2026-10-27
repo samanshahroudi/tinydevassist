@@ -1,11 +1,11 @@
 # 3-day execution milestones
 
-Status: **M3 completed in restored isolated workspace**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
+Status: **M4 completed in restored isolated workspace**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
 
 1. [x] Inspect workspace, create project scope/architecture/decision records.
 2. [x] Python project, tooling, CI-ready tests, local environment.
 3. [x] Document dataset and licensing; inspect base model metadata (runtime inspection pending).
-4. [ ] Deterministic data preparation/splitting and tests.
+4. [x] Deterministic data preparation/splitting and tests.
 5. [ ] Baseline inference and resource metrics.
 6. [ ] Configurable LoRA fine-tuning pipeline.
 7. [ ] Execute truthful, bounded training experiment.
@@ -41,3 +41,12 @@ Status: **M3 completed in restored isolated workspace**. Progress is checkpointe
 - Changed: `LICENSE`, `README.md`, `configs/model.json`, `data/README.md`, `data/DATASET_CARD.md`, `data/samples/developer_support_v1.jsonl`, `docs/model_selection.md`, `docs/decisions.md`, `docs/execution.md`, and `tests/test_dataset_sample.py`.
 - Verification: `PYTHONPATH=src python -m pytest -q` (5 passed); `python -m compileall -q src tests` passed; `git diff --check` passed. Ruff was not installed and cannot be claimed as passing. Staged diff, secret, and weight checks are required before commit.
 - Limitations: no upstream model weights downloaded, no model inference or training, no GitHub remote, no Hugging Face credentials, no user-computer access. `main` remains an unpinned upstream revision until an experiment is executed.
+
+## Session 4 report
+
+- Milestone: 4 — implemented deterministic source validation, normalization, duplicate/near-duplicate controls, category-stratified splits, chat-message formatting, leakage checks, and SHA-256 manifest.
+- Workspace: restored Milestone 3 archive into `/mnt/data/tinydevassist-m4-work/tiny-llm-hf` to avoid overwriting an unrelated `/mnt/data/tiny-llm-hf/README.md`; no access to the user's personal computer. Verified `main`, clean initial status, and all three previous commits before edits.
+- Files: `prepare_data.py`, `src/tinydevassist/data.py`, `tests/test_data_preparation.py`, `Makefile`, `README.md`, `data/README.md`, `data/DATASET_CARD.md`, `docs/architecture.md`, `docs/decisions.md`, and this tracker.
+- Data result: source SHA-256 `92ffc379ffe09d71052d9a7cfc9c9b4fe740c540cb7955e4347e2f646bef151f`; 36 retained rows, 24/6/6 stratified split, no duplicate questions or IDs. Generated outputs are Git-ignored.
+- Verification: offline tests, Python compilation, manifest/hash checks, staged diff/secret/weights checks, and Git commit are recorded in the run report. Ruff remains unavailable in this environment and must not be reported as passing.
+- Limitations: no real model inference/training/deployment, no user-laptop access, no GitHub remote, no Hugging Face credentials. Independent evaluation questions still needed.

@@ -1,6 +1,6 @@
 PYTHON ?= python3
 
-.PHONY: setup setup-train setup-app doctor test lint format format-check check
+.PHONY: setup setup-train setup-app doctor prepare test lint format format-check check
 
 setup:
 	$(PYTHON) -m pip install -e '.[dev]'
@@ -13,6 +13,9 @@ setup-app:
 
 doctor:
 	$(PYTHON) -m tinydevassist doctor
+
+prepare:
+	$(PYTHON) prepare_data.py --seed 42
 
 test:
 	$(PYTHON) -m pytest

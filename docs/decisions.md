@@ -63,3 +63,11 @@
 - **Alternatives considered:** Switching immediately to TinyLlama 1.1B or SmolLM2-135M-Instruct; downloading the model before documenting license and scope.
 - **Reason:** The 360M class balances capacity with a smaller anticipated serving footprint, while retaining an explicit upstream license.
 - **Consequences:** No inference, training, memory, or latency claims are made. The floating `main` revision must be resolved to a commit SHA before a reproducible experiment.
+
+## ADR-009 — Deterministic, stratified small-data splits and chat messages
+
+- **Decision:** Normalize source rows (NFC/whitespace), reject ambiguous duplicate answers and near-duplicate questions, deduplicate identical questions/answers, and split by category with seed 42. Store generated JSONL and a SHA-256 manifest outside Git. Encode SFT examples as role/content messages, not hard-coded model tokens.
+- **Context:** The 36-row project-authored seed needs reproducible preprocessing, leakage checks, and a clean contract for later Transformers/TRL training.
+- **Alternatives considered:** Unseeded random splits, a single global random split, committing derived datasets, manually concatenating chat tokens, and silently removing similar but potentially distinct questions.
+- **Reason:** Per-category stratification retains coverage in all three splits; hashing and stable ordering support auditability; rejecting near-duplicates avoids accidental leakage and data loss; tokenizer chat templates preserve model-specific formatting.
+- **Consequences:** The current seed produces 24/6/6 rows (4/1/1 per category). Near-duplicate detection is heuristic and may need manual review for larger datasets. Generated files must be regenerated after source changes. Held-out rows from one authored source do not constitute an independent generalization benchmark.

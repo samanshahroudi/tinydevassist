@@ -7,7 +7,7 @@ TinyDevAssist answers narrowly scoped developer-support questions with short, ac
 ## Components
 
 1. **Source records:** Public, permission-compatible technical-support examples or newly written examples. Record provenance, version, license, and redistribution permissions. No unknown-license scraped data.
-2. **Preparation:** Deterministic normalization and deduplication; train/validation/test split with seed 42 and leakage checks; store split manifests and hashes.
+2. **Preparation:** Implemented deterministic Unicode/whitespace normalization, exact-duplicate removal, near-duplicate rejection, and category-stratified train/validation/test split with seed 42; store generated split manifests and hashes outside Git.
 3. **Adaptation:** `HuggingFaceTB/SmolLM2-360M-Instruct` with prompt format from the tokenizer's chat template; LoRA via PEFT and TRL; CPU inference and optional CUDA training; configurable hyperparameters. Keep checkpoints outside Git.
 4. **Evaluation:** Fixed held-out test cases, base-vs-adapted generated answers, answer relevance/accuracy on a labeled rubric, latency, peak memory where feasible, and explicit failure cases. Never evaluate on train examples.
 5. **Serving:** Lazy-loaded model, bounded generation controls, Gradio UI on port 7860, Docker non-root user, basic local smoke test, and public Space health/behavior verification.

@@ -31,11 +31,11 @@ Fields: `id` (unique stable identifier), `category` (one of `git`, `python`, `ht
 
 ## Quality controls and limitations
 
-Examples are short and may encode oversimplifications. Answers include commands that require human judgment before running, especially Git operations. **No independent subject-matter review, model training, train/validation/test split, or evaluation has occurred.** A 36-row sample is too small to substantiate broad model improvement; any training run must be reported as a small demonstration and evaluated on genuinely held-out, preferably independently authored questions.
+Examples are short and may encode oversimplifications. Answers include commands that require human judgment before running, especially Git operations. **No independent subject-matter review, model training, or evaluation has occurred.** A 36-row sample is too small to substantiate broad model improvement; any training run must be reported as a small demonstration and evaluated on genuinely held-out, preferably independently authored questions.
 
 ## Preparation and leakage policy
 
-Milestone 4 will implement deterministic normalization, duplicate checks, seeded splits, and a machine-readable manifest. Test records must never be included in prompts or training examples. Do not evaluate solely by exact-match wording or on training questions.
+Milestone 4 implements deterministic Unicode/whitespace normalization, duplicate and near-duplicate checks, and category-stratified seed-42 splits (24 train, 6 validation, 6 test). A generated, ignored `data/processed/manifest.json` records hashes and IDs. Test records must never be included in training examples or hyperparameter selection. These held-out examples share the same authoring process as training data, so an independent evaluation set remains necessary. Do not evaluate solely by exact-match wording or on training questions.
 
 ## Model and intended usage
 
