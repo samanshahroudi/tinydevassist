@@ -47,3 +47,19 @@
 - **Alternatives considered:** Downloading the model as a CI smoke test, running a full training step in CI, skipping checks until inference exists.
 - **Reason:** Fast deterministic checks are affordable and do not require secrets or specialized hardware.
 - **Consequences:** Passing the current CI does not prove ML dependency compatibility, training, inference, or deployed Space health; these require separate later checks.
+
+## ADR-007 — Original, transparent seed dataset instead of externally scraped Q&A
+
+- **Decision:** Track 36 newly authored illustrative developer-support pairs in `data/samples/developer_support_v1.jsonl`, under Apache-2.0, with a dataset card and stable IDs.
+- **Context:** The project needs a small legally redistributable dataset and an auditable starting point within three days. External Q&A corpora can contain third-party rights, personal information, and mixed licensing.
+- **Alternatives considered:** Stack Overflow exports, GitHub issue threads, public technical-support corpora, or untracked synthetic data.
+- **Reason:** Explicitly authored examples avoid unverifiable scraping provenance, are small enough to inspect, and allow the pipeline to be tested without network access.
+- **Consequences:** Drafted with language-model assistance, the examples require independent technical review; 36 rows are insufficient for meaningful generalization claims. An independent held-out evaluation set is still needed. No train/validation/test split exists yet.
+
+## ADR-008 — Verify upstream model metadata before downloading weights
+
+- **Decision:** Retain `HuggingFaceTB/SmolLM2-360M-Instruct` as the candidate and record its official Apache-2.0 license, English focus, chat-template usage, and limitations in `docs/model_selection.md`.
+- **Context:** Model metadata can be checked independently of local GPU and package availability.
+- **Alternatives considered:** Switching immediately to TinyLlama 1.1B or SmolLM2-135M-Instruct; downloading the model before documenting license and scope.
+- **Reason:** The 360M class balances capacity with a smaller anticipated serving footprint, while retaining an explicit upstream license.
+- **Consequences:** No inference, training, memory, or latency claims are made. The floating `main` revision must be resolved to a commit SHA before a reproducible experiment.
