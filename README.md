@@ -1,6 +1,6 @@
 # TinyDevAssist — tiny developer-support language model
 
-A reproducible small-language-model engineering portfolio project. **Status: Milestone 5 baseline measurement completed; the LoRA pipeline remains implementation-only, and training, evaluation, and deployment have not run.**
+A reproducible small-language-model engineering portfolio project. **Status: bounded CPU baseline, LoRA training, and held-out generation comparison completed; deployment and human quality review remain pending.**
 
 ## Goal
 Adapt `HuggingFaceTB/SmolLM2-360M-Instruct` using LoRA for concise answers to developer-support questions about Git, Python, HTTP APIs, and backend debugging. Compare it with the unchanged base model, then publish a model card and CPU-friendly Gradio Docker Space.
@@ -131,3 +131,12 @@ deployment claim.
 [`03_lora_finetuning.ipynb`](notebooks/03_lora_finetuning.ipynb) explores the
 verified plan and reads genuine results only if they exist. The default notebook
 execution does not train. See [training instructions](docs/development.md).
+
+## Held-out comparison (Milestone 8)
+
+[`evaluate.py`](evaluate.py) reuses the matching base-model report and runs the
+adapter on all six held-out prompts at the same pinned model revision. The
+measured CPU comparison produced six nonempty outputs from each model; mean
+generation latency was 9.520 seconds for the base and 10.301 seconds for the
+adapter. This is execution evidence only, not a quality winner: see the
+[evaluation protocol and limitations](docs/evaluation.md).

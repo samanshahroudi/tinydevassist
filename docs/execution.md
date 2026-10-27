@@ -1,6 +1,6 @@
 # 3-day execution milestones
 
-Status: **M5 baseline measurement and M6–M7 bounded LoRA integration run completed on CPU; comparative evaluation and deployment remain unverified**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
+Status: **M5–M8 bounded CPU baseline, LoRA, and paired held-out generation comparison completed; deployment and human quality review remain unverified**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
 
 1. [x] Inspect workspace, create project scope/architecture/decision records.
 2. [x] Python project, tooling, CI-ready tests, local environment.
@@ -9,7 +9,7 @@ Status: **M5 baseline measurement and M6–M7 bounded LoRA integration run compl
 5. [x] Baseline inference and resource metrics (one pinned CPU run on all six held-out prompts).
 6. [x] Configurable LoRA fine-tuning pipeline (real CPU integration verified).
 7. [x] Execute truthful, bounded training experiment.
-8. [ ] Base-versus-adapted evaluation.
+8. [x] Base-versus-adapted held-out generation comparison (no automatic quality claim).
 9. [ ] Refine inference controls and examples.
 10. [ ] Gradio app and smoke tests.
 11. [ ] Docker, Space metadata, deployment guide.
@@ -92,3 +92,11 @@ Status: **M5 baseline measurement and M6–M7 bounded LoRA integration run compl
 - Result: 819,200 of 362,640,320 parameters were trainable. Training completed in 43.5369 seconds (0.138 steps/second), with train loss 3.27303 and validation loss 3.39398. The ignored adapter directory and `outputs/train_lora.json` were created successfully.
 - Limitations: the losses are not a quality comparison, no adapted test evaluation has run, the 36 authored rows are too small for generalization claims, and no public model or Space deployment occurred.
 - Next milestone: compare the base model and adapter on the held-out prompts with an explicit evaluation protocol before making any quality claim.
+
+## Session 10 report
+
+- Milestone: 8 — **completed**. Added `evaluate.py`, `src/tinydevassist/evaluation.py`, focused offline tests, and [`docs/evaluation.md`](evaluation.md).
+- Protocol: the evaluation verifies the held-out split hash and pinned revision, reuses the measured base report, generates every adapter response with greedy decoding, and saves a machine-readable ignored paired report without inventing an automatic quality score.
+- Result: all six base and six adapter responses were nonempty at revision `a10cc1512eabd3dde888204e902eca88bddb4951`; base mean latency was 9.519711 seconds and adapter mean latency was 10.301151 seconds. The shared test SHA-256 was `706756348bd549ee3db4f453189955b84950760a723751fd287b37134566dde7`.
+- Limitations: the six held-out prompts originate from the same 36-row authored seed and are not independent generalization evidence. No quality winner, model publication, or deployment is claimed.
+- Next milestone: refine inference controls and curate examples, including transparent good/bad-generation review.

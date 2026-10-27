@@ -111,3 +111,11 @@
 - **Alternatives considered:** Extending training until loss improved, changing hyperparameters after seeing the first loss, training on test rows, committing adapter weights, or claiming quality improvement without base-versus-adapter evaluation.
 - **Reason:** A single short run validates model loading, chat-template tokenization, LoRA attachment, assistant-only loss masking, optimizer steps, validation, and adapter serialization while limiting cost and overfitting risk for a 24-row training set.
 - **Consequences:** The completed run trained 819,200 adapter parameters for six steps, with 3.27303 training loss and 3.39398 validation loss. Those losses are diagnostic outputs, not evidence of usefulness or improvement; a controlled base-versus-adapter evaluation is still required.
+
+## ADR-015 — Compare complete held-out generations without an invented quality score
+
+- **Decision:** Evaluate the base report and adapter on every held-out prompt at the same pinned revision, reporting coverage, latency, token counts, and paired raw responses while leaving response-quality scoring null.
+- **Context:** The project has six held-out prompts from the same tiny authored seed set. Automatic lexical similarity or a self-judged score would not be meaningful evidence of developer-support quality.
+- **Alternatives considered:** Declaring the lower-loss adapter superior, scoring with an unrelated language model, using a single anecdotal prompt, or skipping comparison until a large benchmark exists.
+- **Reason:** A strict paired generation report validates that both artifacts execute under identical decoding controls, exposes the actual text for review, and preserves an honest boundary around what this data can show.
+- **Consequences:** The first CPU comparison completed all six prompts for both models, but does not select a winner. Independent questions and human technical review remain required before any quality or safety claim.
