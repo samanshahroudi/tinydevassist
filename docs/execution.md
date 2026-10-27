@@ -1,6 +1,6 @@
 # 3-day execution milestones
 
-Status: **M4 completed; M5 baseline implementation committed but real measurements blocked; M6 LoRA implementation checkpointed but training unverified**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
+Status: **M4 completed; M5 baseline implementation committed but real measurements blocked; M6 LoRA implementation checkpointed but training unverified**. The latest M5 preflight resolved an immutable upstream revision and installed the required CPU dependencies, but the model-artifact download did not complete. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
 
 1. [x] Inspect workspace, create project scope/architecture/decision records.
 2. [x] Python project, tooling, CI-ready tests, local environment.
@@ -66,3 +66,11 @@ Status: **M4 completed; M5 baseline implementation committed but real measuremen
 - Files: `train_lora.py`, `src/tinydevassist/training.py`, `configs/train_lora.json`, `tests/test_training.py`, `tests/test_notebooks.py`, `notebooks/03_lora_finetuning.ipynb`, `notebooks/README.md`, `Makefile`, `README.md`, `docs/development.md`, `docs/architecture.md`, `docs/decisions.md`, and this tracker.
 - Verification: offline dry run confirmed the unchanged 36-record source SHA-256, 24/6/6 splits, and a 6-step plan. Unit tests, compilation, notebook execution in **skip mode**, diff checks, and staged secret/weight checks are recorded in the run report. No model download, adapter training, or benchmark occurred.
 - Blockers: no measured baseline, pinned upstream model revision, Transformers/PEFT packages or cached weights, user-laptop access, or GitHub remote. Training/integration and quality claims remain unverified.
+
+## Session 7 report
+
+- Milestone: 5 baseline preflight — **not completed**. The repository was available in an isolated workspace, but this does not establish access to the user's computer.
+- Verified: `main` was clean at `e509bdf`; `prepare_data.py --seed 42` reproduced the 24/6/6 split, including test SHA-256 `706756348bd549ee3db4f453189955b84950760a723751fd287b37134566dde7`. A Python 3.11 CPU environment installed the project, PyTorch `2.14.1+cpu`, Transformers `4.57.6`, and the declared experiment dependencies. CUDA is unavailable.
+- Upstream: the Hugging Face API resolved `HuggingFaceTB/SmolLM2-360M-Instruct` to immutable revision `a10cc1512eabd3dde888204e902eca88bddb4951`.
+- Result: baseline loading was attempted with that exact revision and all six held-out examples, but the tokenizer artifact request was reset by the remote connection; subsequent model retrieval did not finish. No `outputs/baseline.json` was created, so no generation, latency, memory, quality, training, or deployment claim is warranted.
+- Next exact action: on a machine that can complete the model-artifact download, rerun `python inference.py --revision a10cc1512eabd3dde888204e902eca88bddb4951 --device cpu --max-samples 6 --max-new-tokens 96 --temperature 0`, validate the resulting report, then mark M5 complete before attempting LoRA execution.

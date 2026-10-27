@@ -40,3 +40,5 @@ dist/
 .coverage
 htmlcov/
 .mypy_cache/
+# Transient local command logs
+work-*.log
