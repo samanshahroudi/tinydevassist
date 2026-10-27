@@ -26,7 +26,6 @@ train = [
     "datasets>=3.2,<5",
     "accelerate>=1.2,<2",
     "peft>=0.14,<1",
-    "trl>=0.15,<1",
     "safetensors>=0.5,<1",
 ]
 notebooks = [

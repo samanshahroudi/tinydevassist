@@ -1,13 +1,13 @@
 # 3-day execution milestones
 
-Status: **M4 completed; M5 baseline implementation committed, real measurements blocked**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
+Status: **M4 completed; M5 baseline implementation committed but real measurements blocked; M6 LoRA implementation checkpointed but training unverified**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
 
 1. [x] Inspect workspace, create project scope/architecture/decision records.
 2. [x] Python project, tooling, CI-ready tests, local environment.
 3. [x] Document dataset and licensing; inspect base model metadata (runtime inspection pending).
 4. [x] Deterministic data preparation/splitting and tests.
 5. [ ] Baseline inference and resource metrics (code and notebooks implemented; real model run pending).
-6. [ ] Configurable LoRA fine-tuning pipeline.
+6. [ ] Configurable LoRA fine-tuning pipeline (CLI/config/tests/notebook implemented; real model integration pending).
 7. [ ] Execute truthful, bounded training experiment.
 8. [ ] Base-versus-adapted evaluation.
 9. [ ] Refine inference controls and examples.
@@ -58,3 +58,11 @@ Status: **M4 completed; M5 baseline implementation committed, real measurements 
 - Files: `inference.py`, `src/tinydevassist/inference.py`, `tests/test_inference.py`, `notebooks/01_dataset_exploration.ipynb`, `notebooks/02_baseline_model.ipynb`, `notebooks/README.md`, `README.md`, `docs/development.md`, `docs/decisions.md`, `docs/execution.md`, `pyproject.toml`, `Makefile`, `.gitignore`.
 - Verification: 24 offline tests passed; compilation passed; notebook 01 executed against the tracked source and notebook 02 executed in **skip mode**; baseline CLI correctly fails when Transformers is unavailable. No real model weights downloaded or executed. Ruff unavailable and offline installation unsuccessful; do not claim lint or format checks passed.
 - Blockers: no network resolution for huggingface.co; Transformers/weights unavailable; no local-computer access or GitHub remote. Actual model performance, baseline generations, training, and deployment remain unverified.
+
+## Session 6 report
+
+- Milestone: 6 **implementation checkpoint** — added strict LoRA config and bounded dry-run/opt-in CLI, hash-verified train/validation/test inputs, a measured-baseline/pinned-revision gate, assistant-only loss tokenization, right-padding collator, offline tests, and notebook 03. Real training remains **uncompleted**, so Milestone 6 stays unchecked.
+- Workspace: restored the verified Milestone 5 archive into `/mnt/data/tinydevassist-m6-work/tiny-llm-hf`, separately from prior workspaces. Verified `main`, clean initial status, latest commit `5b8151f`, and no Git remote. Not the user's personal computer.
+- Files: `train_lora.py`, `src/tinydevassist/training.py`, `configs/train_lora.json`, `tests/test_training.py`, `tests/test_notebooks.py`, `notebooks/03_lora_finetuning.ipynb`, `notebooks/README.md`, `Makefile`, `README.md`, `docs/development.md`, `docs/architecture.md`, `docs/decisions.md`, and this tracker.
+- Verification: offline dry run confirmed the unchanged 36-record source SHA-256, 24/6/6 splits, and a 6-step plan. Unit tests, compilation, notebook execution in **skip mode**, diff checks, and staged secret/weight checks are recorded in the run report. No model download, adapter training, or benchmark occurred.
+- Blockers: no measured baseline, pinned upstream model revision, Transformers/PEFT packages or cached weights, user-laptop access, or GitHub remote. Training/integration and quality claims remain unverified.

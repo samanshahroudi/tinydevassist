@@ -103,3 +103,19 @@ is not installed, Hugging Face is unreachable, and model weights are not cached.
 No performance or quality results have been recorded. The next requirement is
 to run the baseline successfully on an accessible CPU/GPU machine before
 claiming Milestone 5's measurement objective is complete.
+
+
+## LoRA training implementation (Milestone 6 checkpoint)
+
+The training implementation is now available at
+[`train_lora.py`](train_lora.py) and [`src/tinydevassist/training.py`](src/tinydevassist/training.py),
+with configuration in [`configs/train_lora.json`](configs/train_lora.json).
+Run `python prepare_data.py --seed 42` followed by `python train_lora.py`
+to validate hashes and print a **dry-run plan** without model downloads.
+Training requires an explicit `--execute`, a pinned 40-character upstream
+revision, a matching **measured** baseline on all six held-out test questions,
+and installed ML dependencies. No actual training has been verified.
+
+[`03_lora_finetuning.ipynb`](notebooks/03_lora_finetuning.ipynb) explores the
+verified plan and reads genuine results only if they exist. The default notebook
+execution does not train. See [training instructions](docs/development.md).

@@ -87,3 +87,11 @@
 - **Alternatives considered:** Notebooks as the only implementation, empty placeholder notebooks, or no notebooks at all.
 - **Reason:** A reusable CLI provides reproducibility while notebooks communicate analysis and limitations.
 - **Consequences:** Notebook 01 is executed on the tracked 36-row dataset. Notebook 02 is executed only in explicit skip mode because real model inference is blocked. Later training/evaluation notebooks require measured artifacts before reporting findings.
+
+## ADR-012 — Guarded, assistant-only LoRA SFT with strict provenance
+
+- **Decision:** Use Transformers Trainer and PEFT LoRA, keeping the ML imports lazy and the CLI dry-run-only by default. Mask system/user tokens and padding from the causal-LM loss; use only train/validation splits during adaptation. Require a 40-character upstream model SHA and a matching measured baseline on all held-out test prompts before `--execute`.
+- **Context:** The previous milestone's inference implementation exists, but actual baseline inference is blocked in this runtime; model weights and Transformers/PEFT are unavailable. The 36-row dataset is small and may overfit.
+- **Alternatives considered:** TRL SFTTrainer (version-dependent formatting/label behavior), training on prompt tokens, executing from a floating `main` revision, or training without baseline comparison.
+- **Reason:** An explicit, tested label mask and strict hashes make accidental prompt-loss training or data leakage less likely. A minimal Trainer/PEFT stack avoids TRL version-dependent APIs while preserving adapter-only saves.
+- **Consequences:** The config, CLI, and notebook are **implementation only**, not proof of training. Real tokenizer/chat-template compatibility, adapter loading, GPU memory, loss, and evaluation remain to be verified. The hard step cap and opt-in execution limit accidental long runs.

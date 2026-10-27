@@ -7,7 +7,7 @@ explore and visualize **real outputs** without duplicating the model pipeline.
 | --- | --- | --- |
 | [`01_dataset_exploration.ipynb`](01_dataset_exploration.ipynb) | Reproduce the split; plot category and text-length distributions | **Executed** on the tracked 36-row seed dataset; outputs included |
 | [`02_baseline_model.ipynb`](02_baseline_model.ipynb) | Run baseline CLI (explicit opt-in) and inspect response/latency table | **Executed in skip mode only**; no model weights or measured results |
-| `03_lora_finetuning.ipynb` | Future: inspect a real training run | Not implemented |
+| [`03_lora_finetuning.ipynb`](03_lora_finetuning.ipynb) | Verify split provenance, inspect LoRA plan, opt-in training and real report | **Executed offline dry run only**; no model training |
 | `04_model_evaluation.ipynb` | Future: baseline versus adapted model | Not implemented |
 | `05_inference_optimization.ipynb` | Optional future: measured CPU/GPU comparisons | Not implemented |
 
@@ -28,3 +28,11 @@ for a reproducible report. Real model outputs and metrics are written to ignored
 Notebook outputs may be committed only if generated from the tracked dataset or
 real measured experiments, with their provenance documented. Never commit model
 weights, credentials, private prompts, or fake benchmark numbers.
+
+For notebook 03, run `python prepare_data.py --seed 42` first, then the notebook
+(or `python train_lora.py`) to verify the config and all split hashes.
+`RUN_TRAINING=False` is the safe default. Training requires a 40-character
+upstream model commit SHA, a matching measured baseline report for all six
+held-out test rows, and an explicit `--execute`. The generated adapter and
+`outputs/train_lora.json` remain ignored by Git. A dry run is not evidence of
+training, convergence, or quality improvement.

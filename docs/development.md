@@ -63,3 +63,34 @@ both requested and resolved revisions. `main` is convenient but not pinned.
 This environment could not download Transformers or model weights, so **no real
 baseline metrics or generations exist yet**. The CLI fails rather than
 producing placeholder numbers when dependencies are missing.
+
+## LoRA fine-tuning plan and guarded execution (Milestone 6)
+
+```bash
+python prepare_data.py --seed 42
+python train_lora.py  # offline dry run; verifies source/split hashes, no model download
+# First run the baseline on ALL SIX held-out test examples at the same pinned SHA:
+python inference.py --revision <40-character-upstream-model-commit-sha> --max-samples 6
+# Only after baseline success and with training dependencies installed:
+python train_lora.py --revision <same-40-character-sha> --execute
+```
+
+The config is [`configs/train_lora.json`](../configs/train_lora.json):
+LoRA rank 8, alpha 16, dropout 0.05, target modules `q_proj`/`v_proj`;
+maximum 512 tokens, 1 epoch, batch size 1, gradient accumulation 4, and
+a hard cap of 6 optimizer steps. These are *planned* settings, not tested
+hyperparameters. Review them for your hardware before training.
+
+The CLI fails closed if source/split SHA-256 hashes or seed change, if the
+upstream revision is not a 40-character commit SHA, if the baseline is absent
+or mismatched, or if an existing training report would be overwritten.
+It refuses to reuse a nonempty adapter directory. Actual execution requires
+`pip install -e '.[train]'` and access to the pinned model weights.
+A completed run writes ignored `checkpoints/tinydevassist-lora/` and
+`outputs/train_lora.json`; **no training has been performed or verified** in
+this isolated environment. The baseline experiment itself remains blocked.
+
+Notebook [`03_lora_finetuning.ipynb`](../notebooks/03_lora_finetuning.ipynb)
+executes the verified dry run by default, visualizes only real split counts,
+and reads completed training metrics only if a genuine report exists.
+Do not treat its default execution as a training run.

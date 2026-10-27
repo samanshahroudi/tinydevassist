@@ -1,6 +1,6 @@
 PYTHON ?= python3
 
-.PHONY: setup setup-train setup-app setup-notebooks baseline doctor prepare test lint format format-check check
+.PHONY: setup setup-train setup-app setup-notebooks baseline train-plan doctor prepare test lint format format-check check
 
 setup:
 	$(PYTHON) -m pip install -e '.[dev]'
@@ -16,6 +16,9 @@ setup-notebooks:
 
 baseline:
 	$(PYTHON) inference.py --device cpu
+
+train-plan:
+	$(PYTHON) train_lora.py
 
 doctor:
 	$(PYTHON) -m tinydevassist doctor
