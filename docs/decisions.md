@@ -71,3 +71,19 @@
 - **Alternatives considered:** Unseeded random splits, a single global random split, committing derived datasets, manually concatenating chat tokens, and silently removing similar but potentially distinct questions.
 - **Reason:** Per-category stratification retains coverage in all three splits; hashing and stable ordering support auditability; rejecting near-duplicates avoids accidental leakage and data loss; tokenizer chat templates preserve model-specific formatting.
 - **Consequences:** The current seed produces 24/6/6 rows (4/1/1 per category). Near-duplicate detection is heuristic and may need manual review for larger datasets. Generated files must be regenerated after source changes. Held-out rows from one authored source do not constitute an independent generalization benchmark.
+
+## ADR-010 — Baseline measurements before adapter training
+
+- **Decision:** Add a lazy-loaded Transformers baseline with the upstream chat template, deterministic greedy decoding by default, held-out test prompts, and machine-readable ignored JSON results; keep model experiments out of lightweight CI.
+- **Context:** A credible LoRA comparison requires measured pre-adaptation generations and resource data, but the current workspace has no Transformers package, no model weights, and no network access to Hugging Face.
+- **Alternatives considered:** Inventing sample responses, using a mocked model as a benchmark, downloading a different available model, and running inference during every CI job.
+- **Reason:** The baseline implementation can be offline-tested with fakes while actual measurements remain explicitly blocked until the chosen weights are accessible. The unmodified model must be evaluated before training.
+- **Consequences:** `outputs/baseline.json` is created only after successful real inference; tests using fakes do not establish quality or performance. CPU process RSS snapshots are not peak memory; CUDA peak allocation is separately recorded. Use a pinned model revision and document hardware before publishing results.
+
+## ADR-011 — Experimental notebooks alongside production scripts
+
+- **Decision:** Maintain numbered notebooks for dataset exploration and measured experiments; notebooks call project functions/CLIs instead of reimplementing inference and training. Commit only verifiable outputs.
+- **Context:** Recruiters need inspectable analysis, plots, and methodology in addition to runnable production code.
+- **Alternatives considered:** Notebooks as the only implementation, empty placeholder notebooks, or no notebooks at all.
+- **Reason:** A reusable CLI provides reproducibility while notebooks communicate analysis and limitations.
+- **Consequences:** Notebook 01 is executed on the tracked 36-row dataset. Notebook 02 is executed only in explicit skip mode because real model inference is blocked. Later training/evaluation notebooks require measured artifacts before reporting findings.

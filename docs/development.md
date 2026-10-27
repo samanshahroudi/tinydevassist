@@ -24,6 +24,7 @@ The `requirements.txt` file provides a minimal editable installation. Optional d
 ```bash
 python -m pip install -e '.[train]'
 python -m pip install -e '.[app]'
+python -m pip install -e '.[notebooks]'
 ```
 
 Do **not** install all extras on a CPU-only deployment until actual serving requirements have been measured. No Hugging Face token is required for environment diagnostics or unit tests.
@@ -42,3 +43,23 @@ make check
 ## Reproducibility boundary
 
 Version ranges are currently specified, but no resolved dependency lockfile or training environment has been validated. Record a lockfile or `pip freeze`, PyTorch/CUDA versions, dataset hash, seed, model revision, and hardware details when the first real experiment runs. Never present the current scaffold as proof of training or deployment.
+
+## Baseline experiment
+
+```bash
+python prepare_data.py --seed 42
+python -m pip install -e '.[train,notebooks]'
+python inference.py --device cpu --max-samples 6 --temperature 0 --max-new-tokens 96
+# Writes ignored outputs/baseline.json on success only.
+```
+
+The model and tokenizer are loaded with `trust_remote_code=False`. The script
+uses the upstream tokenizer chat template, generates from **held-out test rows**,
+and records per-question output, token counts, wall-clock generation latency,
+model parameter count/bytes, optional process RSS snapshots (`psutil`), and CUDA
+peak allocation if applicable. CPU RSS before/after are not CPU peak memory.
+`--revision` should be an immutable upstream commit hash; the report records
+both requested and resolved revisions. `main` is convenient but not pinned.
+This environment could not download Transformers or model weights, so **no real
+baseline metrics or generations exist yet**. The CLI fails rather than
+producing placeholder numbers when dependencies are missing.

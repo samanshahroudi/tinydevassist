@@ -1,6 +1,6 @@
 PYTHON ?= python3
 
-.PHONY: setup setup-train setup-app doctor prepare test lint format format-check check
+.PHONY: setup setup-train setup-app setup-notebooks baseline doctor prepare test lint format format-check check
 
 setup:
 	$(PYTHON) -m pip install -e '.[dev]'
@@ -10,6 +10,12 @@ setup-train:
 
 setup-app:
 	$(PYTHON) -m pip install -e '.[app]'
+
+setup-notebooks:
+	$(PYTHON) -m pip install -e '.[notebooks]'
+
+baseline:
+	$(PYTHON) inference.py --device cpu
 
 doctor:
 	$(PYTHON) -m tinydevassist doctor

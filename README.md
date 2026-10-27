@@ -1,6 +1,6 @@
 # TinyDevAssist — tiny developer-support language model
 
-A reproducible small-language-model engineering portfolio project. **Status: Milestone 4 — deterministic dataset preparation and held-out splits implemented; training, evaluation, and deployment have not run.**
+A reproducible small-language-model engineering portfolio project. **Status: Milestone 5 implementation checkpoint — baseline inference code and notebooks added; real baseline measurements, training, evaluation, and deployment have not run.**
 
 ## Goal
 Adapt `HuggingFaceTB/SmolLM2-360M-Instruct` using LoRA for concise answers to developer-support questions about Git, Python, HTTP APIs, and backend debugging. Compare it with the unchanged base model, then publish a model card and CPU-friendly Gradio Docker Space.
@@ -72,3 +72,34 @@ The training records include `messages` in role/content format. Later stages mus
 chat tokens. See [data preparation and leakage policy](data/README.md) and
 [decision ADR-009](docs/decisions.md). This seed set is illustrative and **does not provide
 independent evidence of generalization**.
+
+## Baseline inference and notebooks (Milestone 5 implementation)
+
+Run on a computer with Python 3.11, enough memory, and model access:
+
+```bash
+python -m pip install -e '.[train,notebooks]'
+python prepare_data.py --seed 42
+python inference.py --device cpu --max-samples 6 --max-new-tokens 96 --temperature 0
+# Output (only after a successful run): outputs/baseline.json
+```
+
+To make results reproducible, pass `--revision <upstream-commit-sha>` rather
+than floating `main`. The CLI records each actual response, input/generated
+counts, latency, model parameter count/bytes, process RSS snapshots when
+`psutil` is installed, and CUDA peak allocation when applicable. It does **not**
+claim CPU peak memory. Outputs are Git-ignored. The test prompts are held out
+from the 24-row training split; the six questions are not an independent
+benchmark and do not establish generalization.
+
+[Notebook 01](notebooks/01_dataset_exploration.ipynb) executes reproducible
+seed-data exploration and plots. [Notebook 02](notebooks/02_baseline_model.ipynb)
+provides an opt-in baseline run and report inspection, but currently has **no
+real model generations**. See [notebook guide](notebooks/README.md),
+[developer setup](docs/development.md), and [decision records](docs/decisions.md).
+
+**Measured baseline status:** blocked in the isolated workspace: Transformers
+is not installed, Hugging Face is unreachable, and model weights are not cached.
+No performance or quality results have been recorded. The next requirement is
+to run the baseline successfully on an accessible CPU/GPU machine before
+claiming Milestone 5's measurement objective is complete.

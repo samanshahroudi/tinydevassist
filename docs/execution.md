@@ -1,12 +1,12 @@
 # 3-day execution milestones
 
-Status: **M4 completed in restored isolated workspace**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
+Status: **M4 completed; M5 baseline implementation committed, real measurements blocked**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
 
 1. [x] Inspect workspace, create project scope/architecture/decision records.
 2. [x] Python project, tooling, CI-ready tests, local environment.
 3. [x] Document dataset and licensing; inspect base model metadata (runtime inspection pending).
 4. [x] Deterministic data preparation/splitting and tests.
-5. [ ] Baseline inference and resource metrics.
+5. [ ] Baseline inference and resource metrics (code and notebooks implemented; real model run pending).
 6. [ ] Configurable LoRA fine-tuning pipeline.
 7. [ ] Execute truthful, bounded training experiment.
 8. [ ] Base-versus-adapted evaluation.
@@ -50,3 +50,11 @@ Status: **M4 completed in restored isolated workspace**. Progress is checkpointe
 - Data result: source SHA-256 `92ffc379ffe09d71052d9a7cfc9c9b4fe740c540cb7955e4347e2f646bef151f`; 36 retained rows, 24/6/6 stratified split, no duplicate questions or IDs. Generated outputs are Git-ignored.
 - Verification: offline tests, Python compilation, manifest/hash checks, staged diff/secret/weights checks, and Git commit are recorded in the run report. Ruff remains unavailable in this environment and must not be reported as passing.
 - Limitations: no real model inference/training/deployment, no user-laptop access, no GitHub remote, no Hugging Face credentials. Independent evaluation questions still needed.
+
+## Session 5 report
+
+- Milestone: 5 **implementation checkpoint** — added baseline CLI, lazy-loaded Transformers generator, deterministic decoding and measurable JSON output, offline tests, and the first two notebooks. Real baseline measurements remain **uncompleted**, so Milestone 5 stays unchecked.
+- Workspace: restored Milestone 4 archive to `/mnt/data/tinydevassist-work-m5/tiny-llm-hf`, separate from an unrelated `/mnt/data/tiny-llm-hf/README.md`. Verified `main`, clean initial status, and commits `4bedf18`, `4c0b4a0`, `3fbd101`, `d39f6ca`. Not the user's laptop.
+- Files: `inference.py`, `src/tinydevassist/inference.py`, `tests/test_inference.py`, `notebooks/01_dataset_exploration.ipynb`, `notebooks/02_baseline_model.ipynb`, `notebooks/README.md`, `README.md`, `docs/development.md`, `docs/decisions.md`, `docs/execution.md`, `pyproject.toml`, `Makefile`, `.gitignore`.
+- Verification: 24 offline tests passed; compilation passed; notebook 01 executed against the tracked source and notebook 02 executed in **skip mode**; baseline CLI correctly fails when Transformers is unavailable. No real model weights downloaded or executed. Ruff unavailable and offline installation unsuccessful; do not claim lint or format checks passed.
+- Blockers: no network resolution for huggingface.co; Transformers/weights unavailable; no local-computer access or GitHub remote. Actual model performance, baseline generations, training, and deployment remain unverified.
