@@ -143,3 +143,11 @@
 - **Alternatives considered:** Leave the historical planning text intact, remove the early sections entirely, or claim independent quality from the small authored split.
 - **Reason:** A reader should find one consistent account of what executed, what was measured, and what still requires public verification.
 - **Consequences:** The documentation now distinguishes local experiment evidence from deployment and independent quality validation; it must be updated again when a public Space is actually verified.
+
+## ADR-019 — Resume a partial Hub publication only after verifying the model
+
+- **Decision:** Keep the published adapter repository intact and add a `--space-only` recovery mode that hashes each public model file against the local curated manifest before attempting Space creation.
+- **Context:** The authenticated model upload succeeded, but Space creation returned HTTP 402 because this account lacks the required PRO hosting entitlement. Repeating the original publisher would fail on the already existing model repository.
+- **Alternatives considered:** Delete and recreate the model, overwrite it without comparison, silently ignore the partial state, or publish an unverified static page in place of inference.
+- **Reason:** Hash verification makes the resume step safe and reproducible, and an explicit Space-only path avoids replacing the verified model artifact.
+- **Consequences:** A subscription or other confirmed hosting entitlement is still required. The resume command refuses to proceed if any published file differs from the local artifact; Space build and inference must be checked separately after creation.

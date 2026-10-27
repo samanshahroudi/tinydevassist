@@ -1,6 +1,6 @@
 # 3-day execution milestones
 
-Status: **M5–M10 experiments and local Gradio smoke, plus M13 documentation review, completed; Hugging Face publication and container verification are pending**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
+Status: **M5–M10 experiments and local Gradio smoke, plus M13 documentation review, completed; the model is public, while Space hosting and container verification are pending**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
 
 1. [x] Inspect workspace, create project scope/architecture/decision records.
 2. [x] Python project, tooling, CI-ready tests, local environment.
@@ -126,3 +126,9 @@ Status: **M5–M10 experiments and local Gradio smoke, plus M13 documentation re
 - Milestone 13 — **completed**. The README and architecture now match the measured CPU baseline, six-step LoRA run, paired comparison, and local Gradio smoke. The qualitative review includes verbatim useful and incorrect adapter excerpts; the model card includes usage instructions, experiment hashes, and the actual quality boundary.
 - The Hugging Face CLI again reported no login and no model or Space repository IDs were configured. Docker Desktop's Linux daemon remained unavailable. No public deployment or container build is claimed.
 - Next: M14 CI and reproducibility audit; M11 container verification and M12 publication remain pending their prerequisites.
+
+## Partial Hugging Face publication
+
+- Confirmed the `lnxsam` Hugging Face login and the user-specified IDs `lnxsam/tinydevassist` and `lnxsam/tinydevassist-demo`. The curated nine-file model upload succeeded. An anonymous Hub query verified the public model at commit `7e21c7d08913bc0725ea3cf2c6b72b184f694572`, including 3,293,480-byte adapter weights. No model weights were added to Git.
+- Creating the Docker Space failed with HTTP 402: Hugging Face requires a PRO subscription for Gradio/Docker Spaces on free `cpu-basic` for this account. An anonymous query confirmed that the Space does not exist. No public inference was run.
+- Added a guarded Space-only resume mode and documented the exact command in [`deployment.md`](deployment.md). M12 remains incomplete until a Space builds and public inference passes; M11 container verification remains blocked by the unavailable local Docker daemon.

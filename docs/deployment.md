@@ -54,3 +54,28 @@ Record verified public URLs and smoke results in the README only after this
 check succeeds. The adapter uses roughly 1.45 GB of base fp32 parameter memory
 plus process overhead; Space CPU memory and cold start must be measured in the
 actual deployment. The six held-out prompts are too small to establish quality.
+
+## Current publication state and recovery
+
+The public adapter repository is
+[`lnxsam/tinydevassist`](https://huggingface.co/lnxsam/tinydevassist). An
+anonymous Hub query verified its model card, adapter configuration, adapter
+weights, and tokenizer files at Hub commit
+`7e21c7d08913bc0725ea3cf2c6b72b184f694572`. The Docker Space
+`lnxsam/tinydevassist-demo` does not exist. Its creation returned HTTP 402:
+Hugging Face requires a PRO subscription for Gradio/Docker Spaces on free
+`cpu-basic` for this account. No Space build or public inference ran.
+
+After the account has the required hosting entitlement, resume with:
+
+```powershell
+.venv\Scripts\python.exe deploy_hf.py --model-repo lnxsam/tinydevassist --space-repo lnxsam/tinydevassist-demo --space-only
+.venv\Scripts\python.exe deploy_hf.py --model-repo lnxsam/tinydevassist --space-repo lnxsam/tinydevassist-demo --space-only --execute
+```
+
+The resume mode verifies every curated published model file against the local
+artifact by SHA-256 before creating the Space; it never replaces the existing
+model. Then inspect the Space build and runtime logs and run
+`python smoke.py --url https://lnxsam-tinydevassist-demo.hf.space` only after
+the actual Space URL is confirmed. A failed upload or build still does not
+count as a deployment.

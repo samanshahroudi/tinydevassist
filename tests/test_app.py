@@ -6,7 +6,7 @@ from types import SimpleNamespace
 
 import app
 import pytest
-from deploy_hf import deployment_manifest
+from deploy_hf import deployment_manifest, verify_matching_model_files
 
 
 def test_demo_response_controls(monkeypatch):
@@ -42,3 +42,17 @@ def test_deployment_manifest_contains_only_curated_artifacts(tmp_path):
     assert "training_args.bin" not in model_files
     assert "adapter_model.safetensors" in model_files
     assert "app.py" in space_files
+
+
+def test_space_only_recovery_rejects_changed_model_files(tmp_path):
+    local = tmp_path / "local"
+    remote = tmp_path / "remote"
+    local.mkdir()
+    remote.mkdir()
+    (local / "adapter_config.json").write_bytes(b"abc")
+    (remote / "adapter_config.json").write_bytes(b"abd")
+    with pytest.raises(ValueError, match="differs from local artifact"):
+        verify_matching_model_files(
+            {"adapter_config.json": local / "adapter_config.json"},
+            lambda name: remote / name,
+        )
