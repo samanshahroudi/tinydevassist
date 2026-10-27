@@ -37,6 +37,11 @@ for the exact cases. These observations do not establish a population error rate
 
 ## Reproduce and use
 
+Try the [public Gradio ZeroGPU demo](https://huggingface.co/spaces/saman-shahroudi/tinydevassist-demo).
+One anonymous hosted inference smoke test returned a nonempty response; this
+does not establish sustained availability or answer quality. Free ZeroGPU
+requests may be queued or limited by quota.
+
 Clone the [source repository](https://github.com/samanshahroudi/tinydevassist),
 install Python 3.11 dependencies with `python -m pip install -e '.[app,dev]'`,
 and set `HF_MODEL_REPO` to the exact published adapter repository ID before

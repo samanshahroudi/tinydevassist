@@ -25,7 +25,12 @@ def load_generator() -> AdapterGenerator:
     return AdapterGenerator(BASE_MODEL_ID, BASE_REVISION, adapter, device="cpu")
 
 
-def respond(prompt: str, temperature: float, max_new_tokens: int) -> str:
+def respond(
+    prompt: str,
+    temperature: float,
+    max_new_tokens: int,
+    generator: AdapterGenerator | None = None,
+) -> str:
     """Validate UI inputs before loading a potentially large model."""
     if not isinstance(prompt, str) or not prompt.strip():
         raise ValueError("Enter a developer-support question")
@@ -35,16 +40,17 @@ def respond(prompt: str, temperature: float, max_new_tokens: int) -> str:
         raise ValueError("Maximum tokens must be between 16 and 256")
     if not isinstance(temperature, (int, float)) or not 0 <= temperature <= 1:
         raise ValueError("Temperature must be between 0 and 1")
-    return (
-        load_generator()
-        .generate(prompt.strip(), max_new_tokens=max_new_tokens, temperature=float(temperature))
-        .response
-    )
+    selected = generator if generator is not None else load_generator()
+    return selected.generate(
+        prompt.strip(), max_new_tokens=max_new_tokens, temperature=float(temperature)
+    ).response
 
 
-def create_demo():
+def create_demo(responder=None):
     import gradio as gr
 
+    if responder is None:
+        responder = respond
     with gr.Blocks(title="TinyDevAssist") as demo:
         gr.Markdown(
             "# TinyDevAssist\n"
@@ -59,7 +65,7 @@ def create_demo():
             max_tokens = gr.Slider(16, 256, value=96, step=1, label="Maximum new tokens")
         answer = gr.Textbox(label="Response", lines=8)
         gr.Button("Generate").click(
-            respond, inputs=[prompt, temperature, max_tokens], outputs=answer, api_name="respond"
+            responder, inputs=[prompt, temperature, max_tokens], outputs=answer, api_name="respond"
         )
         gr.Examples(EXAMPLES, inputs=prompt)
         gr.Markdown(

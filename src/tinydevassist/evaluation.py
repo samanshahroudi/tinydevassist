@@ -96,7 +96,10 @@ class AdapterGenerator:
         base = AutoModelForCausalLM.from_pretrained(
             model_id, revision=revision, trust_remote_code=False
         )
-        self.model = PeftModel.from_pretrained(base, adapter_path).to(device).eval()
+        # ZeroGPU emulates CUDA during startup; safetensors must first load on CPU.
+        self.model = (
+            PeftModel.from_pretrained(base, adapter_path, torch_device="cpu").to(device).eval()
+        )
 
     def generate(
         self, prompt: str, *, max_new_tokens: int = 96, temperature: float = 0.0

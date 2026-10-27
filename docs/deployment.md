@@ -1,88 +1,34 @@
 # Hugging Face deployment
 
-## What is packaged
+## Verified public release
 
-The model repository contains the PEFT adapter, tokenizer files, and a model
-card. The Docker Space contains the Gradio app and the small package modules it
-needs. `deploy_hf.py` uses an explicit allowlist; it excludes raw experiment
-reports, training arguments, secrets, and unrelated files from both uploads.
-The Space runs as a non-root user on port 7860 and loads the pinned base model
-plus the public adapter repository on its first inference request.
+- [PEFT adapter and model card](https://huggingface.co/saman-shahroudi/tinydevassist)
+- [Gradio ZeroGPU Space](https://huggingface.co/spaces/saman-shahroudi/tinydevassist-demo)
+- Space revision verified: `d09419f3efb10526fd4bbe93a93ddeb83acfb83c` on `zero-a10g`, status `RUNNING`.
+- An anonymous `python smoke.py --url https://saman-shahroudi-tinydevassist-demo.hf.space` returned HTTP 200 and a nonempty generated answer. This verifies one public inference request, not sustained availability or response quality.
 
-## Local setup and smoke test
+The Space loads the public adapter over the pinned `SmolLM2-360M-Instruct` base model. Its curated upload contains only the Gradio entry point, shared app and inference modules, metadata, and dependencies. The adapter weights remain in the model repository; no weights or experiment reports are committed to GitHub. `HF_MODEL_REPO` is a public Space variable set to `saman-shahroudi/tinydevassist`. The ZeroGPU image uses Python 3.12.12, Gradio 5.50.0, and PyTorch 2.13.0. The model is placed on CUDA at Space startup and generation runs under `@spaces.GPU(duration=60)`; PEFT adapter tensors must first load on CPU before ZeroGPU placement.
+
+## Reproduce locally
 
 ```powershell
 python -m pip install -e '.[app,dev]'
 $env:TINYDEVASSIST_ADAPTER_PATH='checkpoints/tinydevassist-lora'
 python app.py
-# In a second shell:
+# In another shell:
 python smoke.py --url http://127.0.0.1:7860
 ```
 
-The local Docker daemon is required for a Docker build test:
+The ZeroGPU publisher has a dry run and requires exact repository IDs. For an existing model and an existing Gradio ZeroGPU Space, it compares every curated published model file to the local artifact by SHA-256 before upload. It refuses a missing or mismatched model. Authenticate with `hf auth login` locally; never place tokens in arguments, logs, Git, or chat.
 
 ```powershell
-docker build -f space/Dockerfile -t tinydevassist-space .
-docker run --rm -p 7860:7860 -e HF_MODEL_REPO=<published-model-id> tinydevassist-space
+python deploy_zerogpu.py --model-repo saman-shahroudi/tinydevassist --space-repo saman-shahroudi/tinydevassist-demo
+python deploy_zerogpu.py --model-repo saman-shahroudi/tinydevassist --space-repo saman-shahroudi/tinydevassist-demo --execute
+python smoke.py --url https://saman-shahroudi-tinydevassist-demo.hf.space
 ```
 
-## Publish
+The Space repository must already exist with SDK `gradio` and requested hardware `zero-a10g`; a fresh Space can be created through the Hub UI or API after confirming account entitlement. The publisher does not create or replace the model. A successful upload alone does not confirm a healthy build: inspect Space build/runtime logs and run the public smoke test. Free ZeroGPU has per-user GPU quotas and may queue or reject requests after quota exhaustion; do not treat one pass as an uptime guarantee. The 36-example authored seed and six held-out prompts cannot establish answer quality or generalization.
 
-Choose explicit Hugging Face repository IDs, for example
-`your-name/tinydevassist` (model) and `your-name/tinydevassist-demo` (Space).
-Authenticate locally; never paste a token into a commit or chat.
+## Earlier Docker route
 
-```powershell
-.venv\Scripts\hf.exe auth login
-python deploy_hf.py --model-repo <namespace/model-name> --space-repo <namespace/space-name>
-python deploy_hf.py --model-repo <namespace/model-name> --space-repo <namespace/space-name> --execute
-```
-
-The dry run checks the exact curated file manifest. Execution requires a valid
-Hub login, creates new public repositories, uploads the adapter and Space files,
-and sets `HF_MODEL_REPO` as a Space variable. The command refuses to overwrite
-existing repositories; if a partial upload created one, inspect it before
-recovery. Do not interpret an upload message as a healthy deployment.
-
-After publishing, check the Space build and runtime logs, then run:
-
-```powershell
-python smoke.py --url https://<namespace>-<space-name>.hf.space
-```
-
-Record verified public URLs and smoke results in the README only after this
-check succeeds. The adapter uses roughly 1.45 GB of base fp32 parameter memory
-plus process overhead; Space CPU memory and cold start must be measured in the
-actual deployment. The six held-out prompts are too small to establish quality.
-
-## Current publication state and recovery
-
-The public adapter repository is
-[`saman-shahroudi/tinydevassist`](https://huggingface.co/saman-shahroudi/tinydevassist). An
-anonymous Hub query verified its model card, adapter configuration, adapter
-weights, and tokenizer files at Hub commit
-`7e21c7d08913bc0725ea3cf2c6b72b184f694572`. The Docker Space
-`saman-shahroudi/tinydevassist-demo` does not exist. The prior attempt under
-the former `lnxsam` namespace returned HTTP 402:
-Hugging Face requires a PRO subscription for Gradio/Docker Spaces on free
-`cpu-basic` for this account. No Space build or public inference ran.
-
-After the account has the required hosting entitlement, resume with:
-
-```powershell
-.venv\Scripts\python.exe deploy_hf.py --model-repo saman-shahroudi/tinydevassist --space-repo saman-shahroudi/tinydevassist-demo --space-only
-.venv\Scripts\python.exe deploy_hf.py --model-repo saman-shahroudi/tinydevassist --space-repo saman-shahroudi/tinydevassist-demo --space-only --execute
-```
-
-The resume mode verifies every curated published model file against the local
-artifact by SHA-256 before creating the Space; it never replaces the existing
-model. Then inspect the Space build and runtime logs and run
-`python smoke.py --url https://saman-shahroudi-tinydevassist-demo.hf.space` only after
-the actual Space URL is confirmed. A failed upload or build still does not
-count as a deployment.
-
-The application and publisher read `HF_MODEL_REPO` and `HF_SPACE_REPO` rather
-than hard-coding a user namespace. These variables are unset in this workspace.
-If they were set in another shell or in Space settings, change them to the
-new canonical IDs before running a deployment; the local app can alternatively
-use `TINYDEVASSIST_ADAPTER_PATH` for its ignored adapter directory.
+The original Docker Space attempt on `cpu-basic` returned HTTP 402, requiring PRO for that account at the time. The repository retains `space/Dockerfile`, `space/README.md`, and `deploy_hf.py` as an alternate path, but the local Docker daemon was unavailable and that image has not been built or deployed. The verified public demo uses Gradio ZeroGPU instead.

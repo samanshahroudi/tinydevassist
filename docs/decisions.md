@@ -167,3 +167,11 @@
 - **Alternatives considered:** Trusting counts alone, committing generated split files, adding a heavyweight model run to CI, or describing the project as a public deployed assistant.
 - **Reason:** Hash assertions catch accidental changes to the experiment input without model downloads; refusing report replacement protects provenance. The CV wording should describe only the verified local experiment and public adapter.
 - **Consequences:** Intentional dataset edits require a reviewed hash update and a new experiment. CI remains lightweight; it cannot verify model loading or public inference.
+
+## ADR-022 — Serve the published adapter through Gradio ZeroGPU
+
+- **Decision:** Publish the existing adapter in a Gradio ZeroGPU Space, with a curated upload manifest and an eager CUDA model placement followed by GPU-decorated generation. Load PEFT adapter tensors on CPU before placement.
+- **Context:** A Docker Space on `cpu-basic` returned HTTP 402 for this account. The authenticated account could create a Gradio Space requesting `zero-a10g`. The first ZeroGPU build exposed a PEFT safetensors load failure under startup CUDA emulation; explicit CPU loading fixed it.
+- **Alternatives considered:** Upgrade to PRO for the Docker route, wait without a demo, publish a static page without inference, or change the local CPU app into a ZeroGPU-only entry point.
+- **Reason:** The Gradio SDK uses the account's available free ZeroGPU entitlement and reuses the verified public adapter. A separate Space entry point preserves the tested local CPU behavior. Pinning the hosted Python, Gradio, and PyTorch versions makes the runtime more reproducible.
+- **Consequences:** The public Space built and one anonymous inference returned a nonempty response. ZeroGPU queues and quota limits may affect future requests; one pass does not establish uptime or quality. The Docker variant remains unverified.

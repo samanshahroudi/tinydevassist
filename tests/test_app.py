@@ -7,6 +7,7 @@ from types import SimpleNamespace
 import app
 import pytest
 from deploy_hf import deployment_manifest, verify_matching_model_files
+from deploy_zerogpu import zerogpu_manifest
 
 
 def test_demo_response_controls(monkeypatch):
@@ -24,6 +25,15 @@ def test_demo_response_controls(monkeypatch):
         app.respond(" ", 0, 96)
     with pytest.raises(ValueError):
         app.respond("x", 0, 999)
+
+
+def test_demo_can_use_an_eagerly_loaded_generator(monkeypatch):
+    class Stub:
+        def generate(self, prompt, *, max_new_tokens, temperature):
+            return SimpleNamespace(response=f"{prompt}:{max_new_tokens}:{temperature}")
+
+    monkeypatch.setattr(app, "load_generator", lambda: pytest.fail("unexpected model load"))
+    assert app.respond("  Git?  ", 0, 64, generator=Stub()) == "Git?:64:0.0"
 
 
 def test_deployment_manifest_contains_only_curated_artifacts(tmp_path):
@@ -56,3 +66,10 @@ def test_space_only_recovery_rejects_changed_model_files(tmp_path):
             {"adapter_config.json": local / "adapter_config.json"},
             lambda name: remote / name,
         )
+
+
+def test_zerogpu_manifest_excludes_docker_package():
+    files = zerogpu_manifest()
+    assert files["app.py"].name == "app.py"
+    assert files["core_app.py"].name == "app.py"
+    assert "Dockerfile" not in files

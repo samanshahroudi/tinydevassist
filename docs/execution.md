@@ -1,6 +1,6 @@
 # 3-day execution milestones
 
-Status: **M5–M10 experiments and local Gradio smoke, plus M13 documentation review, completed; the model is public, while Space hosting and container verification are pending**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
+Status: **M5–M14 completed, including a public adapter and a verified Gradio ZeroGPU Space; M15 final audit remains.** The alternate Docker image remains unbuilt. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
 
 1. [x] Inspect workspace, create project scope/architecture/decision records.
 2. [x] Python project, tooling, CI-ready tests, local environment.
@@ -12,8 +12,8 @@ Status: **M5–M10 experiments and local Gradio smoke, plus M13 documentation re
 8. [x] Base-versus-adapted held-out generation comparison (no automatic quality claim).
 9. [x] Refine inference controls and examples; inspect all six response pairs.
 10. [x] Gradio app and local HTTP plus real inference smoke test.
-11. [ ] Docker, Space metadata, deployment guide.
-12. [ ] Publish model and Space, verify only if credentials available.
+11. [x] Gradio ZeroGPU Space metadata, deployment guide, and public build; alternate Docker image unverified.
+12. [x] Publish model and Space; verify public Space status and one anonymous inference.
 13. [x] Model card, experiment report, architecture finalization.
 14. [x] CI, cleanup, reproduction instructions, CV bullet.
 15. [ ] Full final verification and audit.
@@ -143,3 +143,10 @@ Status: **M5–M10 experiments and local Gradio smoke, plus M13 documentation re
 - Milestone 14 — **completed**. Pinned the observed source and split SHA-256 values in the deterministic preparation test so CI catches unintended input changes. Baseline inference now refuses to overwrite an existing report before model loading. Reconciled first-baseline and comparison-baseline latency measurements in the README and development guide, and added exact reproduction commands and a truthful CV summary.
 - The published adapter remains public; the Space has not been created because the account lacks the required hosting entitlement. CI does not download weights or claim end-to-end model verification.
 - Next: M15 final link, documentation, and local behavior audit; M11/M12 hosting verification remains pending the external prerequisite.
+
+## Verified ZeroGPU publication
+
+- Milestones 11–12 — **completed through Gradio ZeroGPU**. The authenticated `saman-shahroudi` account created the public Space `saman-shahroudi/tinydevassist-demo` on `zero-a10g`; the existing model repository was reused after all nine curated files matched the local artifact by SHA-256.
+- The first build exposed a PEFT adapter-loading issue under ZeroGPU CUDA emulation. Loading adapter safetensors on CPU before model placement fixed startup. The final published Space revision `d09419f3efb10526fd4bbe93a93ddeb83acfb83c` reached `RUNNING`; build/runtime logs showed base and adapter downloads and Gradio startup on port 7860.
+- An anonymous `smoke.py` request to `https://saman-shahroudi-tinydevassist-demo.hf.space` returned HTTP 200 and a nonempty generated answer. One public request does not establish quality, quota headroom, or sustained reliability. The separate Docker CPU image has not been built or verified.
+- Files: `deploy_zerogpu.py`, `space/zerogpu/`, `app.py`, `src/tinydevassist/evaluation.py`, `tests/test_app.py`, README, deployment/architecture/decision records, and model card. Next: M15 final audit and broader response evaluation.

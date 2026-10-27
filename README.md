@@ -1,9 +1,9 @@
 # TinyDevAssist — tiny developer-support language model
 
-A reproducible small-language-model engineering portfolio project. **Status: bounded CPU baseline, six-step LoRA training, held-out comparison, text inspection, and a local Gradio smoke test completed. The [adapter is public](https://huggingface.co/saman-shahroudi/tinydevassist); the Space is blocked by a Hugging Face PRO subscription requirement.**
+A reproducible small-language-model engineering portfolio project. **Status: bounded CPU baseline, six-step LoRA training, held-out comparison, and text inspection completed. The [adapter](https://huggingface.co/saman-shahroudi/tinydevassist) and [ZeroGPU demo](https://huggingface.co/spaces/saman-shahroudi/tinydevassist-demo) are public; a public inference smoke test passed.**
 
 ## Goal
-Adapt `HuggingFaceTB/SmolLM2-360M-Instruct` using LoRA for concise answers to developer-support questions about Git, Python, HTTP APIs, and backend debugging. Compare it with the unchanged base model, then publish a model card and CPU-friendly Gradio Docker Space.
+Adapt `HuggingFaceTB/SmolLM2-360M-Instruct` using LoRA for concise answers to developer-support questions about Git, Python, HTTP APIs, and backend debugging. Compare it with the unchanged base model, then publish a model card and Gradio ZeroGPU Space.
 
 ## Architecture
 
@@ -15,7 +15,7 @@ flowchart LR
   C --> E[Baseline evaluation]
   D --> F[PEFT adapter]
   F --> G[Fine-tuned evaluation]
-  F --> H[Gradio Docker Space]
+  F --> H[Gradio ZeroGPU Space]
   E --> I[Comparison report]
   G --> I
 ```
@@ -24,11 +24,11 @@ See [architecture](docs/architecture.md), [decisions](docs/decisions.md), and [e
 
 ## Reproducibility and limitations
 
-The [seed dataset card](data/DATASET_CARD.md) documents 36 project-authored examples and their license; [model selection](docs/model_selection.md) documents verified upstream metadata. One bounded CPU adapter-training run and paired evaluation are recorded below; they do not establish generalization or production suitability. Public deployment has not been verified. No secrets, checkpoints, model weights, or personal support transcripts belong in Git.
+The [seed dataset card](data/DATASET_CARD.md) documents 36 project-authored examples and their license; [model selection](docs/model_selection.md) documents verified upstream metadata. One bounded CPU adapter-training run and paired evaluation are recorded below; they do not establish generalization or production suitability. One public hosted inference has been verified; this does not establish availability or answer quality across requests. No secrets, checkpoints, model weights, or personal support transcripts belong in Git.
 
 ## Usage
 
-The commands below cover data preparation, baseline inference, training, evaluation, and the local demo. The [deployment guide](docs/deployment.md) gives the publication steps. Python 3.11 is the measured environment; CUDA is optional for training, while CPU inference is the target for the hosted demo.
+The commands below cover data preparation, baseline inference, training, evaluation, and the local demo. The [deployment guide](docs/deployment.md) gives the publication steps. Python 3.11 is the measured training environment; the hosted ZeroGPU image uses Python 3.12.12 and CUDA for inference.
 
 ## Development environment (Milestone 2)
 
@@ -151,10 +151,11 @@ Install the app dependencies with `python -m pip install -e '.[app]'`, set
 `TINYDEVASSIST_ADAPTER_PATH=checkpoints/tinydevassist-lora`, and run
 `python app.py`. The Gradio interface accepts a question and bounded
 temperature/token controls; `python smoke.py` checks its HTTP endpoint and
-generates one answer. The CPU Docker Space package, model card, exact publish
-steps, and current hosting blocker are in the [deployment guide](docs/deployment.md).
+generates one answer. The ZeroGPU Space package, model card, exact publish
+steps, and hosting limits are in the [deployment guide](docs/deployment.md).
 The [public adapter repository](https://huggingface.co/saman-shahroudi/tinydevassist)
-was verified anonymously. No public Space or hosted inference is claimed.
+and [ZeroGPU Space](https://huggingface.co/spaces/saman-shahroudi/tinydevassist-demo)
+were verified anonymously; the Space returned a nonempty answer to one public smoke request.
 
 The CI repair passed [GitHub Actions](https://github.com/samanshahroudi/tinydevassist/actions/runs/40577541798).
 
@@ -186,9 +187,9 @@ model card are [on Hugging Face](https://huggingface.co/saman-shahroudi/tinydeva
 experiment using a 36-example project-authored Apache-2.0 seed, deterministic
 24/6/6 data splits, six-step LoRA adaptation of SmolLM2-360M-Instruct,
 paired held-out evaluation, offline CI checks, and a public PEFT adapter
-with model card.
+with model card and a public ZeroGPU Gradio demo verified by a hosted inference smoke test.
 
 Next improvements are an independently authored evaluation set with expert
-ratings, longer training only after that evaluation exists, and a hosted demo
-when Hugging Face Space entitlement is available. The present six held-out
+ratings, longer training only after that evaluation exists, and broader hosted
+load and response checks. The present six held-out
 answers show concrete errors and do not support a quality-improvement claim.

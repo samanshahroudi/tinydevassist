@@ -10,14 +10,14 @@ TinyDevAssist answers narrowly scoped developer-support questions with short, ac
 2. **Preparation:** Implemented deterministic Unicode/whitespace normalization, exact-duplicate removal, near-duplicate rejection, and category-stratified train/validation/test split with seed 42; store generated split manifests and hashes outside Git.
 3. **Adaptation:** `HuggingFaceTB/SmolLM2-360M-Instruct` with prompt format from the tokenizer's chat template; LoRA via PEFT and Transformers Trainer; CPU inference and optional CUDA training; configurable hyperparameters. Keep checkpoints outside Git.
 4. **Evaluation:** Fixed held-out test cases, paired base and adapted generations, latency and token counts, and text inspection of all six response pairs. Baseline parameter bytes and process RSS snapshots were recorded; CPU peak memory and an independently labeled quality score were not measured. Never evaluate on train examples.
-5. **Serving:** Lazy-loaded model, bounded generation controls, Gradio UI on port 7860, Docker non-root user, basic local smoke test, and public Space health/behavior verification.
-6. **Delivery:** GitHub Actions lint/tests, dataset and model cards, versioned configuration, reproducibility commands, Docker/Space documentation.
+5. **Serving:** Lazy-loaded CPU model locally; eager model placement and GPU-decorated generation in the public Gradio ZeroGPU Space. Both expose bounded generation controls and have a basic inference smoke test.
+6. **Delivery:** GitHub Actions lint/tests, dataset and model cards, versioned configuration, reproducibility commands, and Space documentation.
 
 ## Deployment architecture
 
-`Hugging Face model repo (weights or adapter + base reference)` → `Hugging Face Docker Space` → `Gradio interface / bounded inference`.
+`Hugging Face model repo (adapter + base reference)` → `Gradio ZeroGPU Space` → `bounded GPU inference`.
 
-The Space is configured for CPU and loads the PEFT adapter over the pinned upstream base. The local baseline recorded about 1.45 GB of fp32 parameter bytes and roughly 1.8 GB process RSS after individual generations; actual Space memory, startup time, and runtime remain unverified. Repository and Space names must come from confirmed user configuration.
+The Space loads the PEFT adapter over the pinned upstream base and places it on ZeroGPU. A public request generated a nonempty answer after the Space reached `RUNNING`; sustained load and hosted memory have not been measured. The local CPU baseline recorded about 1.45 GB of fp32 parameter bytes and roughly 1.8 GB process RSS after individual generations. The Docker CPU variant remains unbuilt and unverified.
 
 ## Risk register
 
@@ -37,4 +37,4 @@ no external metric reporting, and adapter-only saves. The `test` split is
 **not** used for fitting or hyperparameter selection. A bounded CPU training run
 and a paired six-prompt generation comparison have now executed. The
 [text inspection](qualitative_review.md) identifies specific errors without
-claiming a general quality score. Public serving remains to be verified.
+claiming a general quality score. One public ZeroGPU inference request passed; quality and sustained availability remain unverified.
