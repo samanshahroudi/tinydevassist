@@ -1,6 +1,6 @@
 # TinyDevAssist — tiny developer-support language model
 
-A reproducible small-language-model engineering portfolio project. **Status: bounded CPU baseline, six-step LoRA training, held-out comparison, text inspection, and a local Gradio smoke test completed. The [adapter is public](https://huggingface.co/lnxsam/tinydevassist); the Space is blocked by a Hugging Face PRO subscription requirement.**
+A reproducible small-language-model engineering portfolio project. **Status: bounded CPU baseline, six-step LoRA training, held-out comparison, text inspection, and a local Gradio smoke test completed. The [adapter is public](https://huggingface.co/saman-shahroudi/tinydevassist); the Space is blocked by a Hugging Face PRO subscription requirement.**
 
 ## Goal
 Adapt `HuggingFaceTB/SmolLM2-360M-Instruct` using LoRA for concise answers to developer-support questions about Git, Python, HTTP APIs, and backend debugging. Compare it with the unchanged base model, then publish a model card and CPU-friendly Gradio Docker Space.
@@ -151,7 +151,7 @@ Install the app dependencies with `python -m pip install -e '.[app]'`, set
 temperature/token controls; `python smoke.py` checks its HTTP endpoint and
 generates one answer. The CPU Docker Space package, model card, exact publish
 steps, and current hosting blocker are in the [deployment guide](docs/deployment.md).
-The [public adapter repository](https://huggingface.co/lnxsam/tinydevassist)
+The [public adapter repository](https://huggingface.co/saman-shahroudi/tinydevassist)
 was verified anonymously. No public Space or hosted inference is claimed.
 
 The CI repair passed [GitHub Actions](https://github.com/samanshahroudi/tinydevassist/actions/runs/40577541798).

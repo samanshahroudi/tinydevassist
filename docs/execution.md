@@ -132,3 +132,8 @@ Status: **M5–M10 experiments and local Gradio smoke, plus M13 documentation re
 - Confirmed the `lnxsam` Hugging Face login and the user-specified IDs `lnxsam/tinydevassist` and `lnxsam/tinydevassist-demo`. The curated nine-file model upload succeeded. An anonymous Hub query verified the public model at commit `7e21c7d08913bc0725ea3cf2c6b72b184f694572`, including 3,293,480-byte adapter weights. No model weights were added to Git.
 - Creating the Docker Space failed with HTTP 402: Hugging Face requires a PRO subscription for Gradio/Docker Spaces on free `cpu-basic` for this account. An anonymous query confirmed that the Space does not exist. No public inference was run.
 - Added a guarded Space-only resume mode and documented the exact command in [`deployment.md`](deployment.md). M12 remains incomplete until a Space builds and public inference passes; M11 container verification remains blocked by the unavailable local Docker daemon.
+
+## Hugging Face account rename
+
+- The authenticated CLI now reports `saman-shahroudi`. An anonymous Hub query resolved `saman-shahroudi/tinydevassist` to the same public model commit `7e21c7d08913bc0725ea3cf2c6b72b184f694572`; the model was not republished. The future Space ID under the new namespace remains uncreated.
+- Updated current links and the Space-only recovery command to the canonical namespace. Application code already accepts repo IDs through `HF_MODEL_REPO` and `HF_SPACE_REPO`; neither is set in this shell. The Space is still blocked by the documented hosting requirement.

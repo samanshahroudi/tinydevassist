@@ -151,3 +151,11 @@
 - **Alternatives considered:** Delete and recreate the model, overwrite it without comparison, silently ignore the partial state, or publish an unverified static page in place of inference.
 - **Reason:** Hash verification makes the resume step safe and reproducible, and an explicit Space-only path avoids replacing the verified model artifact.
 - **Consequences:** A subscription or other confirmed hosting entitlement is still required. The resume command refuses to proceed if any published file differs from the local artifact; Space build and inference must be checked separately after creation.
+
+## ADR-020 — Use the canonical Hub namespace after the account rename
+
+- **Decision:** Update current model links and future deployment commands from `lnxsam` to `saman-shahroudi`, while retaining the earlier namespace only in historical execution notes.
+- **Context:** The authenticated CLI reports the new username, and an anonymous Hub query resolves `saman-shahroudi/tinydevassist` to the same public model commit. The app and publisher already read repository IDs from environment variables or command-line arguments.
+- **Alternatives considered:** Continue using the former namespace through redirects, hard-code the new name in application code, or republish the adapter as a second model.
+- **Reason:** Canonical IDs are clearer for users and future deployment without duplicating model weights or changing the tested application behavior.
+- **Consequences:** Any previously configured `HF_MODEL_REPO` or `HF_SPACE_REPO` value outside this workspace must be updated separately. The planned Space remains unpublished and subject to the hosting entitlement blocker.
