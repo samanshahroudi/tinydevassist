@@ -7,6 +7,7 @@ from dataclasses import replace
 from pathlib import Path
 
 import pytest
+from train_lora import main
 
 from tinydevassist.data import prepare_dataset
 from tinydevassist.training import (
@@ -17,7 +18,6 @@ from tinydevassist.training import (
     training_plan,
     verify_baseline,
 )
-from train_lora import main
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -135,11 +135,19 @@ def test_reject_mismatched_chat_template_prefix():
 
 def test_execute_rejects_floating_revision_before_model_load(inputs, tmp_path, capsys):
     _, source, processed, _, _ = inputs
-    result = main([
-        "--source", str(source), "--processed-dir", str(processed),
-        "--output-dir", str(tmp_path / "adapter"), "--report", str(tmp_path / "report.json"),
-        "--execute",
-    ])
+    result = main(
+        [
+            "--source",
+            str(source),
+            "--processed-dir",
+            str(processed),
+            "--output-dir",
+            str(tmp_path / "adapter"),
+            "--report",
+            str(tmp_path / "report.json"),
+            "--execute",
+        ]
+    )
     assert result == 1
     assert "pinned" in capsys.readouterr().err
     assert not (tmp_path / "adapter").exists()
@@ -147,11 +155,19 @@ def test_execute_rejects_floating_revision_before_model_load(inputs, tmp_path, c
 
 def test_execute_rejects_missing_baseline_without_importing_transformers(inputs, tmp_path, capsys):
     _, source, processed, _, _ = inputs
-    result = main([
-        "--source", str(source), "--processed-dir", str(processed),
-        "--baseline-report", str(tmp_path / "missing.json"),
-        "--revision", "a" * 40, "--execute",
-    ])
+    result = main(
+        [
+            "--source",
+            str(source),
+            "--processed-dir",
+            str(processed),
+            "--baseline-report",
+            str(tmp_path / "missing.json"),
+            "--revision",
+            "a" * 40,
+            "--execute",
+        ]
+    )
     assert result == 1
     assert "missing.json" in capsys.readouterr().err
 

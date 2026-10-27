@@ -21,26 +21,18 @@ def test_notebooks_are_valid_json_and_have_code_and_explanation():
 
 def test_baseline_notebook_requires_opt_in_to_download_model():
     root = Path(__file__).resolve().parents[1]
-    notebook = json.loads(
-        (root / "notebooks/02_baseline_model.ipynb").read_text(encoding="utf-8")
-    )
+    notebook = json.loads((root / "notebooks/02_baseline_model.ipynb").read_text(encoding="utf-8"))
     code = "\n".join(
-        "".join(cell["source"])
-        for cell in notebook["cells"]
-        if cell["cell_type"] == "code"
+        "".join(cell["source"]) for cell in notebook["cells"] if cell["cell_type"] == "code"
     )
     assert "RUN_BASELINE = False" in code
 
 
 def test_training_notebook_never_trains_without_explicit_opt_in():
     root = Path(__file__).resolve().parents[1]
-    notebook = json.loads(
-        (root / "notebooks/03_lora_finetuning.ipynb").read_text(encoding="utf-8")
-    )
+    notebook = json.loads((root / "notebooks/03_lora_finetuning.ipynb").read_text(encoding="utf-8"))
     code = "\n".join(
-        "".join(cell["source"])
-        for cell in notebook["cells"]
-        if cell["cell_type"] == "code"
+        "".join(cell["source"]) for cell in notebook["cells"] if cell["cell_type"] == "code"
     )
     assert "RUN_TRAINING = False" in code
     assert '"--execute"' in code

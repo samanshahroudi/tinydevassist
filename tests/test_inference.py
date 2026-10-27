@@ -6,8 +6,8 @@ from contextlib import nullcontext
 from types import SimpleNamespace
 
 import pytest
-
 from inference import load_examples, run_baseline
+
 from tinydevassist.inference import BaselineGenerator
 
 
@@ -122,8 +122,10 @@ def test_rejects_blank_prompt_and_unsupported_device():
 
 def test_baseline_report_has_real_mocked_measurements():
     report = run_baseline(
-        make_generator(), [{"id": "git-001", "instruction": "Git?"}],
-        max_new_tokens=12, temperature=0,
+        make_generator(),
+        [{"id": "git-001", "instruction": "Git?"}],
+        max_new_tokens=12,
+        temperature=0,
     )
     assert report["status"] == "measured"
     assert report["summary"]["samples"] == 1
@@ -134,8 +136,7 @@ def test_baseline_report_has_real_mocked_measurements():
 def test_load_examples(tmp_path):
     path = tmp_path / "test.jsonl"
     path.write_text(
-        '{"id":"a","instruction":"first"}\n'
-        '{"id":"b","instruction":"second"}\n',
+        '{"id":"a","instruction":"first"}\n{"id":"b","instruction":"second"}\n',
         encoding="utf-8",
     )
     assert load_examples(path, 1) == [{"id": "a", "instruction": "first"}]

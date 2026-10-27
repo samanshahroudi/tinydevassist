@@ -6,7 +6,7 @@ import argparse
 import json
 import platform
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from statistics import median
 
@@ -23,8 +23,7 @@ def load_examples(path: Path, limit: int) -> list[dict[str, str]]:
             continue
         row = json.loads(line)
         if not all(
-            isinstance(row.get(key), str) and row[key].strip()
-            for key in ("id", "instruction")
+            isinstance(row.get(key), str) and row[key].strip() for key in ("id", "instruction")
         ):
             raise ValueError("each example needs nonempty id and instruction")
         examples.append({"id": row["id"], "instruction": row["instruction"]})
@@ -58,7 +57,7 @@ def run_baseline(
         "device": generator.device,
         "python_version": platform.python_version(),
         "torch_version": str(generator.torch.__version__),
-        "recorded_at_utc": datetime.now(timezone.utc).isoformat(),
+        "recorded_at_utc": datetime.now(UTC).isoformat(),
         "generation": {"max_new_tokens": max_new_tokens, "temperature": temperature},
         "summary": {
             "samples": len(results),
@@ -90,7 +89,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         generator = BaselineGenerator(args.model_id, args.revision, args.device)
         report = run_baseline(
-            generator, examples,
+            generator,
+            examples,
             max_new_tokens=args.max_new_tokens,
             temperature=args.temperature,
         )

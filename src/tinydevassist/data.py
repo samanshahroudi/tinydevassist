@@ -138,9 +138,7 @@ def _split_rows(rows: list[dict[str, str]], seed: int) -> dict[str, list[dict[st
         splits["validation"].extend(shuffled[:n_holdout])
         splits["test"].extend(shuffled[n_holdout : 2 * n_holdout])
         splits["train"].extend(shuffled[2 * n_holdout :])
-    return {
-        name: sorted(group, key=lambda row: row["id"]) for name, group in splits.items()
-    }
+    return {name: sorted(group, key=lambda row: row["id"]) for name, group in splits.items()}
 
 
 def _encode_jsonl(rows: list[dict[str, Any]]) -> bytes:

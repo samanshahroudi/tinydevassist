@@ -8,7 +8,7 @@ import platform
 import re
 from collections import Counter
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -78,8 +78,12 @@ def load_training_config(path: Path, revision: str | None = None) -> TrainingCon
     opt = _exact_keys(
         raw["optimization"],
         {
-            "epochs", "learning_rate", "train_batch_size",
-            "gradient_accumulation_steps", "weight_decay", "max_steps",
+            "epochs",
+            "learning_rate",
+            "train_batch_size",
+            "gradient_accumulation_steps",
+            "weight_decay",
+            "max_steps",
         },
         "optimization",
     )
@@ -151,17 +155,15 @@ def load_verified_splits(
     manifest = json.loads((processed_dir / "manifest.json").read_text(encoding="utf-8"))
     if manifest.get("schema_version") != 1 or manifest.get("seed") != config.seed:
         raise ValueError("manifest schema or seed differs from training config")
-    if (
-        manifest.get("source_path") != source_path.name
-        or manifest.get("source_sha256") != sha256_bytes(source_path.read_bytes())
-    ):
+    if manifest.get("source_path") != source_path.name or manifest.get(
+        "source_sha256"
+    ) != sha256_bytes(source_path.read_bytes()):
         raise ValueError("source dataset hash differs from manifest")
     specs = manifest.get("splits")
     if not isinstance(specs, dict) or set(specs) != set(SPLIT_NAMES):
         raise ValueError("manifest must contain train, validation and test splits")
     splits = {
-        name: _read_split(processed_dir / f"{name}.jsonl", specs[name])
-        for name in SPLIT_NAMES
+        name: _read_split(processed_dir / f"{name}.jsonl", specs[name]) for name in SPLIT_NAMES
     }
     ids = [row["id"] for rows in splits.values() for row in rows]
     if len(ids) != len(set(ids)):
@@ -234,9 +236,7 @@ def tokenize_supervised_example(
     """Use the upstream chat template and mask system/user tokens from the SFT loss."""
     if [message.get("role") for message in messages] != ["system", "user", "assistant"]:
         raise ValueError("expected system/user/assistant messages")
-    prompt = tokenizer.apply_chat_template(
-        messages[:-1], tokenize=True, add_generation_prompt=True
-    )
+    prompt = tokenizer.apply_chat_template(messages[:-1], tokenize=True, add_generation_prompt=True)
     full = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=False)
     if not isinstance(prompt, list) or not isinstance(full, list) or full[: len(prompt)] != prompt:
         raise ValueError("chat-template prompt must be a prefix of the completed conversation")
@@ -303,7 +303,9 @@ def run_training(
         for name in ("train", "validation")
     }
     model = AutoModelForCausalLM.from_pretrained(
-        config.base_model_id, revision=config.revision, trust_remote_code=False,
+        config.base_model_id,
+        revision=config.revision,
+        trust_remote_code=False,
         torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
     )
     model.config.use_cache = False
@@ -368,7 +370,7 @@ def run_training(
     return {
         "schema_version": 1,
         "status": "trained",
-        "recorded_at_utc": datetime.now(timezone.utc).isoformat(),
+        "recorded_at_utc": datetime.now(UTC).isoformat(),
         "base_model_id": config.base_model_id,
         "requested_revision": config.revision,
         "resolved_revision": resolved,

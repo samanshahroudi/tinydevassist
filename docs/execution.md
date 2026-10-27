@@ -100,3 +100,9 @@ Status: **M5–M8 bounded CPU baseline, LoRA, and paired held-out generation com
 - Result: all six base and six adapter responses were nonempty at revision `a10cc1512eabd3dde888204e902eca88bddb4951`; base mean latency was 9.519711 seconds and adapter mean latency was 10.301151 seconds. The shared test SHA-256 was `706756348bd549ee3db4f453189955b84950760a723751fd287b37134566dde7`.
 - Limitations: the six held-out prompts originate from the same 36-row authored seed and are not independent generalization evidence. No quality winner, model publication, or deployment is claimed.
 - Next milestone: refine inference controls and curate examples, including transparent good/bad-generation review.
+
+## CI repair
+
+- Reproduced the GitHub failure with the workflow's exact Ruff command on Python 3.11. Fixed UTC alias, import order, notebook import placement, and existing formatting drift across source, tests, and notebooks.
+- The notebook data exploration cell now imports the installed package directly, matching the documented editable install.
+- Verified `python -m ruff check .`, `python -m ruff format --check .`, and the offline test suite locally before commit. This repair does not change model weights or experiment reports.

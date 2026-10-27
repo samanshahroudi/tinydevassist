@@ -98,10 +98,9 @@ class BaselineGenerator:
         self.model = model.to(self.device).eval()
         self.model_id = model_id
         self.requested_revision = revision
-        self.resolved_revision = (
-            getattr(self.model.config, "_commit_hash", None)
-            or getattr(self.tokenizer, "init_kwargs", {}).get("_commit_hash")
-        )
+        self.resolved_revision = getattr(self.model.config, "_commit_hash", None) or getattr(
+            self.tokenizer, "init_kwargs", {}
+        ).get("_commit_hash")
         self.parameter_count, self.parameter_bytes = _model_size(self.model)
 
     def generate(
@@ -149,9 +148,7 @@ class BaselineGenerator:
                 process_rss_before_bytes=before,
                 process_rss_after_bytes=_rss_bytes(),
                 cuda_peak_allocated_bytes=(
-                    int(self.torch.cuda.max_memory_allocated())
-                    if self.device == "cuda"
-                    else None
+                    int(self.torch.cuda.max_memory_allocated()) if self.device == "cuda" else None
                 ),
             ),
         )
