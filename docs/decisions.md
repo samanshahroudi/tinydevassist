@@ -103,3 +103,11 @@
 - **Alternatives considered:** Reporting mocked results, treating the tiny held-out split as a quality benchmark, committing the full generation report, or claiming a CPU serving SLA.
 - **Reason:** The matching base-model evidence is now sufficient for the guarded LoRA entry gate, while the small authored split and a single machine are not sufficient for broader quality or operational claims.
 - **Consequences:** The report's 14.303-second median and 12.301-second mean per-prompt latency, 361,821,120 unique parameters, and 1,447,284,480 parameter bytes are reproducibility evidence only. Adapter training, comparative evaluation, and deployment remain unverified.
+
+## ADR-014 — Execute one bounded adapter-training integration run
+
+- **Decision:** Execute the guarded LoRA configuration once on CPU at the same immutable base-model revision as the measured baseline, then retain adapter weights and raw reports outside Git.
+- **Context:** The verified baseline, deterministic 24/6/6 split, matching hashes, installed ML dependencies, and explicit six-step cap satisfied the training CLI's fail-closed entry gates.
+- **Alternatives considered:** Extending training until loss improved, changing hyperparameters after seeing the first loss, training on test rows, committing adapter weights, or claiming quality improvement without base-versus-adapter evaluation.
+- **Reason:** A single short run validates model loading, chat-template tokenization, LoRA attachment, assistant-only loss masking, optimizer steps, validation, and adapter serialization while limiting cost and overfitting risk for a 24-row training set.
+- **Consequences:** The completed run trained 819,200 adapter parameters for six steps, with 3.27303 training loss and 3.39398 validation loss. Those losses are diagnostic outputs, not evidence of usefulness or improvement; a controlled base-versus-adapter evaluation is still required.

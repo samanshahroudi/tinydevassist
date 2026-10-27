@@ -82,8 +82,9 @@ python train_lora.py --revision <same-40-character-sha> --execute
 The config is [`configs/train_lora.json`](../configs/train_lora.json):
 LoRA rank 8, alpha 16, dropout 0.05, target modules `q_proj`/`v_proj`;
 maximum 512 tokens, 1 epoch, batch size 1, gradient accumulation 4, and
-a hard cap of 6 optimizer steps. These are *planned* settings, not tested
-hyperparameters. Review them for your hardware before training.
+a hard cap of 6 optimizer steps. One CPU run used those exact bounded settings;
+they are not validated hyperparameters. Review them for your hardware before
+training.
 
 The CLI fails closed if source/split SHA-256 hashes or seed change, if the
 upstream revision is not a 40-character commit SHA, if the baseline is absent
@@ -91,9 +92,11 @@ or mismatched, or if an existing training report would be overwritten.
 It refuses to reuse a nonempty adapter directory. Actual execution requires
 `pip install -e '.[train]'` and access to the pinned model weights.
 A completed run writes ignored `checkpoints/tinydevassist-lora/` and
-`outputs/train_lora.json`; **no training has been performed or verified** in
-this isolated environment. The required matching baseline is now available,
-but model training has not been attempted.
+`outputs/train_lora.json`. A real CPU run completed on 2026-10-27 with the
+matching pinned baseline: 24 training rows, 6 validation rows, six optimizer
+steps, 819,200 trainable LoRA parameters, 43.537 seconds training runtime,
+and 3.39398 validation loss. It is a bounded pipeline verification only—not a
+quality comparison, generalization result, or deployment benchmark.
 
 Notebook [`03_lora_finetuning.ipynb`](../notebooks/03_lora_finetuning.ipynb)
 executes the verified dry run by default, visualizes only real split counts,

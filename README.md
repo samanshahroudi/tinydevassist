@@ -94,8 +94,7 @@ benchmark and do not establish generalization.
 
 [Notebook 01](notebooks/01_dataset_exploration.ipynb) executes reproducible
 seed-data exploration and plots. [Notebook 02](notebooks/02_baseline_model.ipynb)
-provides an opt-in baseline run and report inspection, but currently has **no
-real model generations**. See [notebook guide](notebooks/README.md),
+provides an opt-in baseline run and report inspection. See [notebook guide](notebooks/README.md),
 [developer setup](docs/development.md), and [decision records](docs/decisions.md).
 
 **Measured baseline status:** completed once in an isolated CPU environment
@@ -110,7 +109,7 @@ report is intentionally ignored; its held-out-input SHA-256 is
 `706756348bd549ee3db4f453189955b84950760a723751fd287b37134566dde7`.
 
 
-## LoRA training implementation (Milestone 6 checkpoint)
+## LoRA fine-tuning (Milestones 6–7)
 
 The training implementation is now available at
 [`train_lora.py`](train_lora.py) and [`src/tinydevassist/training.py`](src/tinydevassist/training.py),
@@ -119,7 +118,15 @@ Run `python prepare_data.py --seed 42` followed by `python train_lora.py`
 to validate hashes and print a **dry-run plan** without model downloads.
 Training requires an explicit `--execute`, a pinned 40-character upstream
 revision, a matching **measured** baseline on all six held-out test questions,
-and installed ML dependencies. No actual training has been verified.
+and installed ML dependencies.
+
+One bounded CPU run completed on 2026-10-27 at the same pinned revision. It
+trained 819,200 LoRA parameters for six optimizer steps over one epoch on the
+24-row training split; the six-row validation loss was 3.39398. Training took
+43.537 seconds at 0.138 steps/second on Python 3.11.16 and PyTorch 2.14.1+cpu.
+The adapter and raw report are Git-ignored. This confirms only that the guarded
+pipeline executed; it is not a quality comparison, generalization result, or
+deployment claim.
 
 [`03_lora_finetuning.ipynb`](notebooks/03_lora_finetuning.ipynb) explores the
 verified plan and reads genuine results only if they exist. The default notebook

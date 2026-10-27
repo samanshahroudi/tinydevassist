@@ -1,14 +1,14 @@
 # 3-day execution milestones
 
-Status: **M5 completed with one bounded CPU baseline measurement; M6 LoRA implementation is checkpointed but training remains unverified**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
+Status: **M5 baseline measurement and M6–M7 bounded LoRA integration run completed on CPU; comparative evaluation and deployment remain unverified**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
 
 1. [x] Inspect workspace, create project scope/architecture/decision records.
 2. [x] Python project, tooling, CI-ready tests, local environment.
 3. [x] Document dataset and licensing; inspect base model metadata (runtime inspection pending).
 4. [x] Deterministic data preparation/splitting and tests.
 5. [x] Baseline inference and resource metrics (one pinned CPU run on all six held-out prompts).
-6. [ ] Configurable LoRA fine-tuning pipeline (CLI/config/tests/notebook implemented; real model integration pending).
-7. [ ] Execute truthful, bounded training experiment.
+6. [x] Configurable LoRA fine-tuning pipeline (real CPU integration verified).
+7. [x] Execute truthful, bounded training experiment.
 8. [ ] Base-versus-adapted evaluation.
 9. [ ] Refine inference controls and examples.
 10. [ ] Gradio app and smoke tests.
@@ -83,3 +83,12 @@ Status: **M5 completed with one bounded CPU baseline measurement; M6 LoRA implem
 - Result: greedy decoding (`max_new_tokens=96`, `temperature=0`) completed for all six prompts. The ignored `outputs/baseline.json` recorded a 14.302741-second median and 12.300894-second mean latency, 361,821,120 unique parameters, and 1,447,284,480 parameter bytes. All six responses were nonempty.
 - Limitations: this small held-out set is not independent evidence of quality or generalization, CPU RSS snapshots are not peak CPU memory, and a single local CPU run is not a deployment benchmark. No adapter training, comparative evaluation, or public deployment occurred.
 - Next milestone: execute the guarded LoRA experiment only after revalidating this matching baseline report and the pinned revision; do not mark M6 complete until an actual adapter run succeeds.
+
+## Session 9 report
+
+- Milestones: 6–7 — **completed** with one truthful, bounded CPU LoRA integration run in `C:\\Users\\Saman\\Documents\\Projects\\tiny-llm-hf`. The checkout was synchronized to `d6ee408` first; no access to any other user computer is claimed.
+- Inputs: regenerated deterministic 24/6/6 splits, then reran all six baseline prompts at revision `a10cc1512eabd3dde888204e902eca88bddb4951`. The baseline and training reports agree on the test split SHA-256 `706756348bd549ee3db4f453189955b84950760a723751fd287b37134566dde7` and source SHA-256 `92ffc379ffe09d71052d9a7cfc9c9b4fe740c540cb7955e4347e2f646bef151f`.
+- Environment: Python 3.11.16, PyTorch 2.14.1+cpu, Transformers 4.57.6, CPU only. The configured LoRA rank 8/alpha 16/dropout 0.05 targets `q_proj` and `v_proj`; execution used one epoch, batch size 1, gradient accumulation 4, and the hard six-step limit.
+- Result: 819,200 of 362,640,320 parameters were trainable. Training completed in 43.5369 seconds (0.138 steps/second), with train loss 3.27303 and validation loss 3.39398. The ignored adapter directory and `outputs/train_lora.json` were created successfully.
+- Limitations: the losses are not a quality comparison, no adapted test evaluation has run, the 36 authored rows are too small for generalization claims, and no public model or Space deployment occurred.
+- Next milestone: compare the base model and adapter on the held-out prompts with an explicit evaluation protocol before making any quality claim.
