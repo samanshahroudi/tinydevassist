@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+.env
+.env.*
+!.env.example
+# Local generated ML artifacts
+checkpoints/
+outputs/
+artifacts/
+models/
+wandb/
+mlruns/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.gguf
+*.ckpt
+*.onnx
+# Dataset outputs (retain documentation)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
