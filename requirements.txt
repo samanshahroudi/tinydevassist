@@ -1,0 +1,5 @@
+# Minimal editable install. For tests or ML pipelines, install optional extras:
+#   python -m pip install -e '.[dev]'
+#   python -m pip install -e '.[train]'
+#   python -m pip install -e '.[app]'
+-e .

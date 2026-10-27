@@ -31,3 +31,19 @@
 - **Alternatives considered:** Publishing demo placeholders as results.
 - **Reason:** CV credibility and reproducibility.
 - **Consequences:** Missing experiments and blockers remain visible in README and reports.
+
+## ADR-005 — Lightweight package core with optional ML extras
+
+- **Decision:** Package the project using a `src/` layout, setuptools, Python 3.11 as the ML target, and separate `dev`, `train`, and `app` dependency groups.
+- **Context:** The baseline CI and developer tooling should run quickly without downloading PyTorch and model artifacts; GPU and CPU deployment have different requirements.
+- **Alternatives considered:** A single requirements file with every ML library, Poetry-only packaging, a pinned CUDA wheel in the repository.
+- **Reason:** Optional extras make the code importable and testable on ordinary machines while allowing independent runtime environments.
+- **Consequences:** Training and serving dependencies are not yet resolved to a tested lockfile; dependency compatibility must be confirmed during implementation and experimentation.
+
+## ADR-006 — Offline environment doctor and lightweight CI
+
+- **Decision:** Add an offline `tinydevassist doctor` diagnostic, Ruff/pytest checks, and a GitHub Actions quality job on Python 3.11.
+- **Context:** Each milestone needs quick verifiable quality gates before costly model downloads or training.
+- **Alternatives considered:** Downloading the model as a CI smoke test, running a full training step in CI, skipping checks until inference exists.
+- **Reason:** Fast deterministic checks are affordable and do not require secrets or specialized hardware.
+- **Consequences:** Passing the current CI does not prove ML dependency compatibility, training, inference, or deployed Space health; these require separate later checks.

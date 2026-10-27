@@ -30,3 +30,10 @@ data/processed/*
 .DS_Store
 .idea/
 .vscode/
+# Build and local tooling
+*.egg-info/
+build/
+dist/
+.coverage
+htmlcov/
+.mypy_cache/

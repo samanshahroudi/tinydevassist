@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=75,<82", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tinydevassist"
+version = "0.1.0"
+description = "A reproducible tiny developer-support language-model experiment"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = {file = "LICENSE"}
+authors = [{name = "Saman Shahroudi"}]
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3,<10", "ruff>=0.9,<1"]
+train = [
+    "torch>=2.5,<3",
+    "transformers>=4.48,<5",
+    "datasets>=3.2,<5",
+    "accelerate>=1.2,<2",
+    "peft>=0.14,<1",
+    "trl>=0.15,<1",
+    "safetensors>=0.5,<1",
+]
+app = [
+    "torch>=2.5,<3",
+    "transformers>=4.48,<5",
+    "peft>=0.14,<1",
+    "gradio>=5.12,<7",
+]
+
+[project.scripts]
+tinydevassist = "tinydevassist.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.format]
+quote-style = "double"
