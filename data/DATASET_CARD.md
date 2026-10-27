@@ -21,7 +21,7 @@ A small, auditable starter set for supervised instruction-following experiments 
 - **Maintainer:** Saman Shahroudi (project repository).
 - **License:** Apache License 2.0; see [`../LICENSE`](../LICENSE). The license applies to these newly authored examples, not to any third-party material or the base model.
 - **Version:** `project-authored-v1`, tracked in Git. SHA-256 of the JSONL file: `92ffc379ffe09d71052d9a7cfc9c9b4fe740c540cb7955e4347e2f646bef151f`. Record the Git commit for each run.
-- **Source URL:** this repository, `data/samples/developer_support_v1.jsonl` (no public remote URL has been established).
+- **Source URL:** [public seed file](https://github.com/samanshahroudi/tinydevassist/blob/main/data/samples/developer_support_v1.jsonl) in the project repository. Pin a Git commit when reproducing an experiment.
 - **Redistribution:** intended to be redistributable under Apache-2.0, subject to the license and ordinary review of any future contributions.
 - **Collection date:** 2026-10-27.
 
@@ -31,7 +31,7 @@ Fields: `id` (unique stable identifier), `category` (one of `git`, `python`, `ht
 
 ## Quality controls and limitations
 
-Examples are short and may encode oversimplifications. Answers include commands that require human judgment before running, especially Git operations. **No independent subject-matter review, model training, or evaluation has occurred.** A 36-row sample is too small to substantiate broad model improvement; any training run must be reported as a small demonstration and evaluated on genuinely held-out, preferably independently authored questions.
+Examples are short and may encode oversimplifications. Answers include commands that require human judgment before running, especially Git operations. A six-step LoRA run and paired generation on the six held-out rows have completed, but **no independent subject-matter review or independent evaluation set** exists. The model produced documented incorrect advice. A 36-row sample is too small to substantiate broad model improvement; the run is a small pipeline demonstration, and future quality evaluation needs independently authored questions.
 
 ## Preparation and leakage policy
 

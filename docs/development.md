@@ -2,7 +2,7 @@
 
 ## Supported environments
 
-- Target for training and serving: **Python 3.11** (3.12 may work; not yet end-to-end tested).
+- Target for the measured local training and CPU serving workflow: **Python 3.11**. The public ZeroGPU Space runs Python 3.12.12 with pinned serving dependencies; local Python 3.12 training has not been tested.
 - Python 3.13 can run the dependency-free core and its tests, but ML-library compatibility is **not yet verified**.
 - Linux/macOS/WSL2 recommended. GPU is optional for the initial project setup, but training time depends heavily on CUDA availability.
 - Do not install unverified CUDA-specific PyTorch wheels blindly. Follow the [official PyTorch selector](https://pytorch.org/get-started/locally/) for the local CUDA driver/runtime.
@@ -42,7 +42,7 @@ make check
 
 ## Reproducibility boundary
 
-Version ranges are specified in `pyproject.toml`, but there is no cross-platform lockfile. One Python 3.11.16 CPU environment completed baseline generation, six-step LoRA training, and paired evaluation with PyTorch 2.14.1+cpu, Transformers 4.57.6, PEFT 0.21.2, seed 42, and upstream revision `a10cc1512eabd3dde888204e902eca88bddb4951`. The source and split hashes are pinned by the data-preparation regression test. This validates that environment for a bounded experiment, not other platforms or a public Space.
+Version ranges are specified in `pyproject.toml`, but there is no cross-platform lockfile. One Python 3.11.16 CPU environment completed baseline generation, six-step LoRA training, and paired evaluation with PyTorch 2.14.1+cpu, Transformers 4.57.6, PEFT 0.21.2, seed 42, and upstream revision `a10cc1512eabd3dde888204e902eca88bddb4951`. The source and split hashes are pinned by the data-preparation regression test. Separately, the pinned Python 3.12.12 ZeroGPU serving image built and answered one public request. Neither observation validates all platforms or sustained hosted reliability.
 
 ## Baseline experiment
 

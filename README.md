@@ -80,7 +80,7 @@ Run on a computer with Python 3.11, enough memory, and model access:
 ```bash
 python -m pip install -e '.[train,notebooks]'
 python prepare_data.py --seed 42
-python inference.py --device cpu --max-samples 6 --max-new-tokens 96 --temperature 0
+python inference.py --revision a10cc1512eabd3dde888204e902eca88bddb4951 --device cpu --max-samples 6 --max-new-tokens 96 --temperature 0
 # Output (only after a successful run): outputs/baseline.json
 ```
 
@@ -157,7 +157,7 @@ The [public adapter repository](https://huggingface.co/saman-shahroudi/tinydevas
 and [ZeroGPU Space](https://huggingface.co/spaces/saman-shahroudi/tinydevassist-demo)
 were verified anonymously; the Space returned a nonempty answer to one public smoke request.
 
-The CI repair passed [GitHub Actions](https://github.com/samanshahroudi/tinydevassist/actions/runs/40577541798).
+The latest deployment milestone passed [GitHub Actions](https://github.com/samanshahroudi/tinydevassist/actions/runs/40598949071). See the [final audit](docs/final_audit.md) for verification scope and remaining limits.
 
 ## Reproduce the measured experiment
 

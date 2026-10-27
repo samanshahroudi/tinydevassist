@@ -28,6 +28,8 @@ The pinned revision `a10cc1512eabd3dde888204e902eca88bddb4951` and tokenizer
 were downloaded and exercised for CPU baseline inference, bounded LoRA training,
 and paired adapter generation. The six-prompt latency figures and validation
 loss are recorded in [`evaluation.md`](evaluation.md) and
-[`execution.md`](execution.md). GPU compatibility, peak CPU memory,
-quantization, independent response quality, and public serving remain
-unverified.
+[`execution.md`](execution.md). Peak CPU memory, quantization, independent
+response quality, and sustained hosting reliability remain unverified. A
+Gradio ZeroGPU Space built and one anonymous hosted inference returned a
+nonempty answer; that verifies a narrow GPU serving path, not general
+compatibility or answer quality. See the [deployment record](deployment.md).

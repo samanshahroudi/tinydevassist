@@ -1,10 +1,10 @@
 # 3-day execution milestones
 
-Status: **M5–M14 completed, including a public adapter and a verified Gradio ZeroGPU Space; M15 final audit remains.** The alternate Docker image remains unbuilt. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
+Status: **M1–M15 completed, including a public adapter, a verified Gradio ZeroGPU Space, and a final audit.** The alternate Docker image remains unbuilt; independent response quality remains unmeasured. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
 
 1. [x] Inspect workspace, create project scope/architecture/decision records.
 2. [x] Python project, tooling, CI-ready tests, local environment.
-3. [x] Document dataset and licensing; inspect base model metadata (runtime inspection pending).
+3. [x] Document dataset and licensing; inspect base model metadata and the pinned runtime model.
 4. [x] Deterministic data preparation/splitting and tests.
 5. [x] Baseline inference and resource metrics (one pinned CPU run on all six held-out prompts).
 6. [x] Configurable LoRA fine-tuning pipeline (real CPU integration verified).
@@ -16,7 +16,7 @@ Status: **M5–M14 completed, including a public adapter and a verified Gradio Z
 12. [x] Publish model and Space; verify public Space status and one anonymous inference.
 13. [x] Model card, experiment report, architecture finalization.
 14. [x] CI, cleanup, reproduction instructions, CV bullet.
-15. [ ] Full final verification and audit.
+15. [x] Final link, documentation, CI, local test, and public inference audit; limits recorded.
 
 ## Session 1 report
 
@@ -150,3 +150,9 @@ Status: **M5–M14 completed, including a public adapter and a verified Gradio Z
 - The first build exposed a PEFT adapter-loading issue under ZeroGPU CUDA emulation. Loading adapter safetensors on CPU before model placement fixed startup. The final published Space revision `d09419f3efb10526fd4bbe93a93ddeb83acfb83c` reached `RUNNING`; build/runtime logs showed base and adapter downloads and Gradio startup on port 7860.
 - An anonymous `smoke.py` request to `https://saman-shahroudi-tinydevassist-demo.hf.space` returned HTTP 200 and a nonempty generated answer. One public request does not establish quality, quota headroom, or sustained reliability. The separate Docker CPU image has not been built or verified.
 - Files: `deploy_zerogpu.py`, `space/zerogpu/`, `app.py`, `src/tinydevassist/evaluation.py`, `tests/test_app.py`, README, deployment/architecture/decision records, and model card. Next: M15 final audit and broader response evaluation.
+
+## Final audit
+
+- Milestone 15 — **completed**. Corrected stale dataset, model-selection, development, and README status text. The [audit report](final_audit.md) lists verified checks and remaining limits.
+- The public model and ZeroGPU Space were anonymously confirmed, and a fresh hosted inference smoke returned HTTP 200 plus a nonempty response. The earlier deployment commit passed GitHub Actions; this audit commit requires its own CI check after push.
+- Local quality gates, dry-run training plan, dependency diagnostic, and 49 relative Markdown links were checked. No full retraining or independent quality study was run during this audit.
