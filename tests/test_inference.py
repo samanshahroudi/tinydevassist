@@ -6,7 +6,7 @@ from contextlib import nullcontext
 from types import SimpleNamespace
 
 import pytest
-from inference import load_examples, run_baseline
+from inference import load_examples, main, run_baseline
 
 from tinydevassist.inference import BaselineGenerator
 
@@ -142,3 +142,17 @@ def test_load_examples(tmp_path):
     assert load_examples(path, 1) == [{"id": "a", "instruction": "first"}]
     with pytest.raises(ValueError):
         load_examples(path, 0)
+
+
+def test_baseline_refuses_existing_report_before_model_load(tmp_path, monkeypatch):
+    source = tmp_path / "test.jsonl"
+    source.write_text('{"id":"a","instruction":"Git?"}\n', encoding="utf-8")
+    output = tmp_path / "baseline.json"
+    output.write_text("previous measurement", encoding="utf-8")
+
+    def unexpected_load(*args, **kwargs):
+        raise AssertionError("model should not load when the report already exists")
+
+    monkeypatch.setattr("inference.BaselineGenerator", unexpected_load)
+    assert main(["--input", str(source), "--output", str(output)]) == 1
+    assert output.read_text(encoding="utf-8") == "previous measurement"

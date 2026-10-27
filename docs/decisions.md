@@ -159,3 +159,11 @@
 - **Alternatives considered:** Continue using the former namespace through redirects, hard-code the new name in application code, or republish the adapter as a second model.
 - **Reason:** Canonical IDs are clearer for users and future deployment without duplicating model weights or changing the tested application behavior.
 - **Consequences:** Any previously configured `HF_MODEL_REPO` or `HF_SPACE_REPO` value outside this workspace must be updated separately. The planned Space remains unpublished and subject to the hosting entitlement blocker.
+
+## ADR-021 — Pin the measured data hashes in CI and state portfolio limits
+
+- **Decision:** Assert the measured source and train/validation/test hashes in the deterministic data-preparation test, refuse to overwrite an existing baseline report, and put exact reproduction commands and a bounded CV summary in the README.
+- **Context:** The existing test checked repeatability but would pass after an unintended source or split change. Baseline inference could silently replace an earlier report, and early documentation described the first run without explaining the later matching rerun used for evaluation.
+- **Alternatives considered:** Trusting counts alone, committing generated split files, adding a heavyweight model run to CI, or describing the project as a public deployed assistant.
+- **Reason:** Hash assertions catch accidental changes to the experiment input without model downloads; refusing report replacement protects provenance. The CV wording should describe only the verified local experiment and public adapter.
+- **Consequences:** Intentional dataset edits require a reviewed hash update and a new experiment. CI remains lightweight; it cannot verify model loading or public inference.

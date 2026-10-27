@@ -15,7 +15,7 @@ Status: **M5–M10 experiments and local Gradio smoke, plus M13 documentation re
 11. [ ] Docker, Space metadata, deployment guide.
 12. [ ] Publish model and Space, verify only if credentials available.
 13. [x] Model card, experiment report, architecture finalization.
-14. [ ] CI, cleanup, reproduction instructions, CV bullet.
+14. [x] CI, cleanup, reproduction instructions, CV bullet.
 15. [ ] Full final verification and audit.
 
 ## Session 1 report
@@ -137,3 +137,9 @@ Status: **M5–M10 experiments and local Gradio smoke, plus M13 documentation re
 
 - The authenticated CLI now reports `saman-shahroudi`. An anonymous Hub query resolved `saman-shahroudi/tinydevassist` to the same public model commit `7e21c7d08913bc0725ea3cf2c6b72b184f694572`; the model was not republished. The future Space ID under the new namespace remains uncreated.
 - Updated current links and the Space-only recovery command to the canonical namespace. Application code already accepts repo IDs through `HF_MODEL_REPO` and `HF_SPACE_REPO`; neither is set in this shell. The Space is still blocked by the documented hosting requirement.
+
+## Reproducibility and CI audit
+
+- Milestone 14 — **completed**. Pinned the observed source and split SHA-256 values in the deterministic preparation test so CI catches unintended input changes. Baseline inference now refuses to overwrite an existing report before model loading. Reconciled first-baseline and comparison-baseline latency measurements in the README and development guide, and added exact reproduction commands and a truthful CV summary.
+- The published adapter remains public; the Space has not been created because the account lacks the required hosting entitlement. CI does not download weights or claim end-to-end model verification.
+- Next: M15 final link, documentation, and local behavior audit; M11/M12 hosting verification remains pending the external prerequisite.

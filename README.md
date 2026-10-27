@@ -97,12 +97,14 @@ seed-data exploration and plots. [Notebook 02](notebooks/02_baseline_model.ipynb
 provides an opt-in baseline run and report inspection. See [notebook guide](notebooks/README.md),
 [developer setup](docs/development.md), and [decision records](docs/decisions.md).
 
-**Measured baseline status:** completed once in an isolated CPU environment
+**Measured baseline status:** completed twice in one CPU environment
 on 2026-10-27. The pinned revision
 `a10cc1512eabd3dde888204e902eca88bddb4951` generated all six held-out test
 prompts with greedy decoding (96 maximum new tokens) on Python 3.11.16 and
-PyTorch 2.14.1+cpu. The report recorded a 14.303-second median generation
-latency, 12.301-second mean latency, and 361,821,120 unique model parameters
+PyTorch 2.14.1+cpu. The first report recorded a 14.303-second median generation
+latency and 12.301-second mean latency. A matching baseline rerun used for the
+paired comparison recorded 10.793-second median and 9.520-second mean latency.
+The baseline contained 361,821,120 unique model parameters
 (1,447,284,480 parameter bytes). These are one-machine CPU measurements, not
 a quality evaluation or a general deployment performance claim. The generated
 report is intentionally ignored; its held-out-input SHA-256 is
@@ -155,3 +157,38 @@ The [public adapter repository](https://huggingface.co/saman-shahroudi/tinydevas
 was verified anonymously. No public Space or hosted inference is claimed.
 
 The CI repair passed [GitHub Actions](https://github.com/samanshahroudi/tinydevassist/actions/runs/40577541798).
+
+## Reproduce the measured experiment
+
+On Python 3.11 with the `train` extra installed, use the pinned upstream
+revision below. These commands produce ignored artifacts and require model
+downloads and sufficient CPU memory; the baseline, training, and evaluation
+CLIs refuse to overwrite existing reports or adapter directories.
+
+```powershell
+python prepare_data.py --seed 42
+python inference.py --revision a10cc1512eabd3dde888204e902eca88bddb4951 --device cpu
+python train_lora.py --revision a10cc1512eabd3dde888204e902eca88bddb4951 --execute
+python evaluate.py --revision a10cc1512eabd3dde888204e902eca88bddb4951 --device cpu
+```
+
+The tracked 36-row seed should produce source SHA-256
+`92ffc379ffe09d71052d9a7cfc9c9b4fe740c540cb7955e4347e2f646bef151f`
+and train/validation/test split counts of 24/6/6. The test split SHA-256 is
+`706756348bd549ee3db4f453189955b84950760a723751fd287b37134566dde7`.
+CI checks these hashes through the deterministic preparation test, along with
+linting, formatting, and lightweight unit tests. The published adapter and
+model card are [on Hugging Face](https://huggingface.co/saman-shahroudi/tinydevassist).
+
+## CV summary and next improvements
+
+**CV-ready summary:** Built a reproducible CPU developer-support language-model
+experiment using a 36-example project-authored Apache-2.0 seed, deterministic
+24/6/6 data splits, six-step LoRA adaptation of SmolLM2-360M-Instruct,
+paired held-out evaluation, offline CI checks, and a public PEFT adapter
+with model card.
+
+Next improvements are an independently authored evaluation set with expert
+ratings, longer training only after that evaluation exists, and a hosted demo
+when Hugging Face Space entitlement is available. The present six held-out
+answers show concrete errors and do not support a quality-improvement claim.

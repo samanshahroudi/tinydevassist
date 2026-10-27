@@ -42,14 +42,14 @@ make check
 
 ## Reproducibility boundary
 
-Version ranges are currently specified, but no resolved dependency lockfile or training environment has been validated. Record a lockfile or `pip freeze`, PyTorch/CUDA versions, dataset hash, seed, model revision, and hardware details when the first real experiment runs. Never present the current scaffold as proof of training or deployment.
+Version ranges are specified in `pyproject.toml`, but there is no cross-platform lockfile. One Python 3.11.16 CPU environment completed baseline generation, six-step LoRA training, and paired evaluation with PyTorch 2.14.1+cpu, Transformers 4.57.6, PEFT 0.21.2, seed 42, and upstream revision `a10cc1512eabd3dde888204e902eca88bddb4951`. The source and split hashes are pinned by the data-preparation regression test. This validates that environment for a bounded experiment, not other platforms or a public Space.
 
 ## Baseline experiment
 
 ```bash
 python prepare_data.py --seed 42
 python -m pip install -e '.[train,notebooks]'
-python inference.py --device cpu --max-samples 6 --temperature 0 --max-new-tokens 96
+python inference.py --revision a10cc1512eabd3dde888204e902eca88bddb4951 --device cpu --max-samples 6 --temperature 0 --max-new-tokens 96
 # Writes ignored outputs/baseline.json on success only.
 ```
 
@@ -60,11 +60,13 @@ model parameter count/bytes, optional process RSS snapshots (`psutil`), and CUDA
 peak allocation if applicable. CPU RSS before/after are not CPU peak memory.
 `--revision` should be an immutable upstream commit hash; the report records
 both requested and resolved revisions. `main` is convenient but not pinned.
-One real CPU baseline completed on 2026-10-27 using Python 3.11.16, PyTorch
+Two CPU baseline runs completed on 2026-10-27 using Python 3.11.16, PyTorch
 2.14.1+cpu, and upstream revision `a10cc1512eabd3dde888204e902eca88bddb4951`.
 All six held-out prompts were generated with greedy decoding and the ignored
-report recorded 14.303 seconds median and 12.301 seconds mean latency. These
-are single-machine measurements, not quality or deployment claims. The CLI
+first report recorded 14.303 seconds median and 12.301 seconds mean latency.
+A later matching baseline rerun used for paired evaluation recorded 10.793
+seconds median and 9.520 seconds mean latency. These are single-machine
+measurements, not quality or deployment claims. The CLI
 still fails rather than producing placeholder numbers when dependencies are
 missing.
 

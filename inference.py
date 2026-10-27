@@ -85,6 +85,9 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--max-samples must be positive")
     if not args.input.is_file():
         parser.error(f"missing {args.input}; run python prepare_data.py first")
+    if args.output.exists():
+        print(f"Baseline not completed: refusing to overwrite {args.output}", file=sys.stderr)
+        return 1
     examples = load_examples(args.input, args.max_samples)
     try:
         generator = BaselineGenerator(args.model_id, args.revision, args.device)

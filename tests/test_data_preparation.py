@@ -43,6 +43,14 @@ def test_deterministic_stratified_splits_and_manifest(tmp_path: Path) -> None:
     repeat = prepare_dataset(SOURCE, second, seed=42)
     assert manifest == repeat
     assert manifest["input_count"] == manifest["retained_count"] == 36
+    assert manifest["source_sha256"] == (
+        "92ffc379ffe09d71052d9a7cfc9c9b4fe740c540cb7955e4347e2f646bef151f"
+    )
+    assert {name: part["sha256"] for name, part in manifest["splits"].items()} == {
+        "train": "9560c0253c56f5164390f8fa26e4a7f6f3cd9e2ddbe1246e69fa25c0b9e3dc7a",
+        "validation": "d48b1b3606715749f08ffab0cb44c27b8dabcb4818cdf746feeab0f729b69a38",
+        "test": "706756348bd549ee3db4f453189955b84950760a723751fd287b37134566dde7",
+    }
     assert {name: data["count"] for name, data in manifest["splits"].items()} == {
         "train": 24,
         "validation": 6,
