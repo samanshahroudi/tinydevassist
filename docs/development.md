@@ -60,9 +60,13 @@ model parameter count/bytes, optional process RSS snapshots (`psutil`), and CUDA
 peak allocation if applicable. CPU RSS before/after are not CPU peak memory.
 `--revision` should be an immutable upstream commit hash; the report records
 both requested and resolved revisions. `main` is convenient but not pinned.
-This environment could not download Transformers or model weights, so **no real
-baseline metrics or generations exist yet**. The CLI fails rather than
-producing placeholder numbers when dependencies are missing.
+One real CPU baseline completed on 2026-10-27 using Python 3.11.16, PyTorch
+2.14.1+cpu, and upstream revision `a10cc1512eabd3dde888204e902eca88bddb4951`.
+All six held-out prompts were generated with greedy decoding and the ignored
+report recorded 14.303 seconds median and 12.301 seconds mean latency. These
+are single-machine measurements, not quality or deployment claims. The CLI
+still fails rather than producing placeholder numbers when dependencies are
+missing.
 
 ## LoRA fine-tuning plan and guarded execution (Milestone 6)
 
@@ -88,7 +92,8 @@ It refuses to reuse a nonempty adapter directory. Actual execution requires
 `pip install -e '.[train]'` and access to the pinned model weights.
 A completed run writes ignored `checkpoints/tinydevassist-lora/` and
 `outputs/train_lora.json`; **no training has been performed or verified** in
-this isolated environment. The baseline experiment itself remains blocked.
+this isolated environment. The required matching baseline is now available,
+but model training has not been attempted.
 
 Notebook [`03_lora_finetuning.ipynb`](../notebooks/03_lora_finetuning.ipynb)
 executes the verified dry run by default, visualizes only real split counts,

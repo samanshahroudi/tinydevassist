@@ -1,6 +1,6 @@
 # TinyDevAssist — tiny developer-support language model
 
-A reproducible small-language-model engineering portfolio project. **Status: Milestone 5 implementation checkpoint — baseline inference code and notebooks added; real baseline measurements, training, evaluation, and deployment have not run.**
+A reproducible small-language-model engineering portfolio project. **Status: Milestone 5 baseline measurement completed; the LoRA pipeline remains implementation-only, and training, evaluation, and deployment have not run.**
 
 ## Goal
 Adapt `HuggingFaceTB/SmolLM2-360M-Instruct` using LoRA for concise answers to developer-support questions about Git, Python, HTTP APIs, and backend debugging. Compare it with the unchanged base model, then publish a model card and CPU-friendly Gradio Docker Space.
@@ -98,11 +98,16 @@ provides an opt-in baseline run and report inspection, but currently has **no
 real model generations**. See [notebook guide](notebooks/README.md),
 [developer setup](docs/development.md), and [decision records](docs/decisions.md).
 
-**Measured baseline status:** blocked in the isolated workspace: Transformers
-is not installed, Hugging Face is unreachable, and model weights are not cached.
-No performance or quality results have been recorded. The next requirement is
-to run the baseline successfully on an accessible CPU/GPU machine before
-claiming Milestone 5's measurement objective is complete.
+**Measured baseline status:** completed once in an isolated CPU environment
+on 2026-10-27. The pinned revision
+`a10cc1512eabd3dde888204e902eca88bddb4951` generated all six held-out test
+prompts with greedy decoding (96 maximum new tokens) on Python 3.11.16 and
+PyTorch 2.14.1+cpu. The report recorded a 14.303-second median generation
+latency, 12.301-second mean latency, and 361,821,120 unique model parameters
+(1,447,284,480 parameter bytes). These are one-machine CPU measurements, not
+a quality evaluation or a general deployment performance claim. The generated
+report is intentionally ignored; its held-out-input SHA-256 is
+`706756348bd549ee3db4f453189955b84950760a723751fd287b37134566dde7`.
 
 
 ## LoRA training implementation (Milestone 6 checkpoint)

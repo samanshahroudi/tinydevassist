@@ -95,3 +95,11 @@
 - **Alternatives considered:** TRL SFTTrainer (version-dependent formatting/label behavior), training on prompt tokens, executing from a floating `main` revision, or training without baseline comparison.
 - **Reason:** An explicit, tested label mask and strict hashes make accidental prompt-loss training or data leakage less likely. A minimal Trainer/PEFT stack avoids TRL version-dependent APIs while preserving adapter-only saves.
 - **Consequences:** The config, CLI, and notebook are **implementation only**, not proof of training. Real tokenizer/chat-template compatibility, adapter loading, GPU memory, loss, and evaluation remain to be verified. The hard step cap and opt-in execution limit accidental long runs.
+
+## ADR-013 — Record the first baseline as a bounded CPU measurement
+
+- **Decision:** Mark the baseline measurement objective complete only for the six held-out prompts at upstream revision `a10cc1512eabd3dde888204e902eca88bddb4951`; keep the raw report ignored and document its environment and aggregate results.
+- **Context:** A real run completed on Python 3.11.16 with PyTorch 2.14.1+cpu after the repository's earlier isolated environments could not obtain the model artifacts. It used greedy decoding, a maximum of 96 new tokens, and no CUDA device.
+- **Alternatives considered:** Reporting mocked results, treating the tiny held-out split as a quality benchmark, committing the full generation report, or claiming a CPU serving SLA.
+- **Reason:** The matching base-model evidence is now sufficient for the guarded LoRA entry gate, while the small authored split and a single machine are not sufficient for broader quality or operational claims.
+- **Consequences:** The report's 14.303-second median and 12.301-second mean per-prompt latency, 361,821,120 unique parameters, and 1,447,284,480 parameter bytes are reproducibility evidence only. Adapter training, comparative evaluation, and deployment remain unverified.

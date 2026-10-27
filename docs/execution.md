@@ -1,12 +1,12 @@
 # 3-day execution milestones
 
-Status: **M4 completed; M5 baseline implementation committed but real measurements blocked; M6 LoRA implementation checkpointed but training unverified**. The latest M5 preflight resolved an immutable upstream revision and installed the required CPU dependencies, but the model-artifact download did not complete. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
+Status: **M5 completed with one bounded CPU baseline measurement; M6 LoRA implementation is checkpointed but training remains unverified**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
 
 1. [x] Inspect workspace, create project scope/architecture/decision records.
 2. [x] Python project, tooling, CI-ready tests, local environment.
 3. [x] Document dataset and licensing; inspect base model metadata (runtime inspection pending).
 4. [x] Deterministic data preparation/splitting and tests.
-5. [ ] Baseline inference and resource metrics (code and notebooks implemented; real model run pending).
+5. [x] Baseline inference and resource metrics (one pinned CPU run on all six held-out prompts).
 6. [ ] Configurable LoRA fine-tuning pipeline (CLI/config/tests/notebook implemented; real model integration pending).
 7. [ ] Execute truthful, bounded training experiment.
 8. [ ] Base-versus-adapted evaluation.
@@ -74,3 +74,12 @@ Status: **M4 completed; M5 baseline implementation committed but real measuremen
 - Upstream: the Hugging Face API resolved `HuggingFaceTB/SmolLM2-360M-Instruct` to immutable revision `a10cc1512eabd3dde888204e902eca88bddb4951`.
 - Result: baseline loading was attempted with that exact revision and all six held-out examples, but the tokenizer artifact request was reset by the remote connection; subsequent model retrieval did not finish. No `outputs/baseline.json` was created, so no generation, latency, memory, quality, training, or deployment claim is warranted.
 - Next exact action: on a machine that can complete the model-artifact download, rerun `python inference.py --revision a10cc1512eabd3dde888204e902eca88bddb4951 --device cpu --max-samples 6 --max-new-tokens 96 --temperature 0`, validate the resulting report, then mark M5 complete before attempting LoRA execution.
+
+## Session 8 report
+
+- Milestone: 5 — **completed** with one real, bounded baseline measurement in this isolated workspace; this does not establish access to the user's computer.
+- Inputs: `prepare_data.py --seed 42` generated the same 24/6/6 split. The six held-out test rows have SHA-256 `706756348bd549ee3db4f453189955b84950760a723751fd287b37134566dde7`.
+- Environment: Python 3.11.16, PyTorch 2.14.1+cpu, no CUDA device, Transformers 4.57.6, and `HuggingFaceTB/SmolLM2-360M-Instruct` resolved and loaded at immutable revision `a10cc1512eabd3dde888204e902eca88bddb4951`.
+- Result: greedy decoding (`max_new_tokens=96`, `temperature=0`) completed for all six prompts. The ignored `outputs/baseline.json` recorded a 14.302741-second median and 12.300894-second mean latency, 361,821,120 unique parameters, and 1,447,284,480 parameter bytes. All six responses were nonempty.
+- Limitations: this small held-out set is not independent evidence of quality or generalization, CPU RSS snapshots are not peak CPU memory, and a single local CPU run is not a deployment benchmark. No adapter training, comparative evaluation, or public deployment occurred.
+- Next milestone: execute the guarded LoRA experiment only after revalidating this matching baseline report and the pinned revision; do not mark M6 complete until an actual adapter run succeeds.
