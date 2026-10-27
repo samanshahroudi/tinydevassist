@@ -39,3 +39,9 @@ These figures prove that both paths generated responses in this CPU
 environment; they do **not** prove that the adapter is more accurate, safer, or
 generally useful. A larger independently sourced evaluation set and human
 review are required before making that claim.
+
+See [text inspection of all six held-out responses](qualitative_review.md)
+for representative useful and incorrect answers. The adapter fabricated a
+`psutil` API in one answer and gave misleading Git and operations guidance in
+others. This review is an inspection of the same small authored split, not an
+independent quality assessment.

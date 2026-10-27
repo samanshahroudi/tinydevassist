@@ -50,6 +50,7 @@ def create_demo():
             "# TinyDevAssist\n"
             "A small developer-support model adapted with six LoRA training steps. "
             "Its answers may be wrong; check commands before running them. "
+            "Observed errors include fabricated API calls and incorrect Git commands. "
             "The six-prompt comparison does not establish better quality than the base model."
         )
         prompt = gr.Textbox(label="Developer question", lines=3, max_lines=5)

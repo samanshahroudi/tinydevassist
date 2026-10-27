@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from tinydevassist.evaluation import comparison_report, summarize_generations
+from tinydevassist.evaluation import AdapterGenerator, comparison_report, summarize_generations
 
 
 def test_comparison_report_has_no_automatic_quality_metric():
@@ -50,3 +50,21 @@ def test_generation_summary_counts_blank_responses():
         "mean_latency_seconds": 2.0,
         "mean_generated_tokens": 2.0,
     }
+
+
+def test_adapter_rejects_requests_beyond_training_sequence_budget():
+    class FakeTensor:
+        shape = (1, 500)
+
+        def to(self, device):
+            return self
+
+    class FakeTokenizer:
+        def apply_chat_template(self, *args, **kwargs):
+            return {"input_ids": FakeTensor()}
+
+    generator = AdapterGenerator.__new__(AdapterGenerator)
+    generator.tokenizer = FakeTokenizer()
+    generator.device = "cpu"
+    with pytest.raises(ValueError, match="512-token demo budget"):
+        generator.generate("What happened?", max_new_tokens=96)

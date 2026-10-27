@@ -127,3 +127,11 @@
 - **Alternatives considered:** Commit weights to GitHub, merge and upload a full base model, use a floating base revision, or let an upload command scan the entire local repository.
 - **Reason:** An explicit file list keeps reports, credentials, training arguments, and local caches out of the public repositories. Gradio 5.50.0 and Hugging Face Hub 0.36.2 resolve with the measured Transformers stack; a CPU PyTorch wheel keeps the Docker image focused on CPU serving.
 - **Consequences:** Publication requires authenticated Hugging Face access and exact model and Space repository IDs. Upload success is separate from a healthy Space build and public inference; each must be checked before claiming deployment.
+
+## ADR-017 — Bound demo context and publish observed response failures
+
+- **Decision:** Reject generation requests whose tokenized chat prompt plus requested completion exceeds the 512-token training sequence budget, and publish a text inspection of all six held-out response pairs.
+- **Context:** The Gradio demo exposes a configurable 16–256 completion-token range. The measured adapter supplied fabricated API usage and misleading Git and operations guidance on the small held-out set.
+- **Alternatives considered:** Silent prompt truncation, allowing requests beyond the training budget, claiming a quality score from six authored prompts, or showing only favorable generations.
+- **Reason:** A preflight rejection gives users a clear way to shorten the request while preserving their original question. Showing specific failures gives the demo and model card a checkable limitation.
+- **Consequences:** Some longer questions require fewer requested new tokens or cannot be served through the demo. The text inspection is descriptive and cannot estimate generalization or an error rate.

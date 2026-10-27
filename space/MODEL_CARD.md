@@ -30,6 +30,10 @@ was 9.520 seconds for the base and 10.301 seconds for the adapter. No
 independent quality score or improvement claim is available. The small authored
 dataset cannot establish generalization. Responses may contain wrong or unsafe
 commands; verify them before use.
+Text inspection of the six held-out responses found a fabricated `psutil` API,
+misleading Git guidance, and premature operations advice. See the
+[review](https://github.com/samanshahroudi/tinydevassist/blob/main/docs/qualitative_review.md)
+for the exact cases. These observations do not establish a population error rate.
 
 Load this adapter with PEFT on the pinned base revision. See the
 [source repository](https://github.com/samanshahroudi/tinydevassist) for the

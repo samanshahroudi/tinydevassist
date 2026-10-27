@@ -140,6 +140,8 @@ measured CPU comparison produced six nonempty outputs from each model; mean
 generation latency was 9.520 seconds for the base and 10.301 seconds for the
 adapter. This is execution evidence only, not a quality winner: see the
 [evaluation protocol and limitations](docs/evaluation.md).
+The [six-response text review](docs/qualitative_review.md) records concrete
+failure cases, including fabricated API usage and misleading Git advice.
 
 ## Local demo and deployment
 

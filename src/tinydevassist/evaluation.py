@@ -9,6 +9,8 @@ from typing import Any
 
 from tinydevassist.data import prompt_messages
 
+MAX_SEQUENCE_LENGTH = 512
+
 
 @dataclass(frozen=True)
 class EvaluationGeneration:
@@ -111,6 +113,12 @@ class AdapterGenerator:
             return_dict=True,
         )
         encoded = {name: value.to(self.device) for name, value in encoded.items()}
+        input_tokens = int(encoded["input_ids"].shape[-1])
+        if input_tokens + max_new_tokens > MAX_SEQUENCE_LENGTH:
+            raise ValueError(
+                f"question is too long for the {MAX_SEQUENCE_LENGTH}-token demo budget; "
+                "shorten it or lower maximum new tokens"
+            )
         started = time.perf_counter()
         kwargs = {
             "max_new_tokens": max_new_tokens,
@@ -122,10 +130,10 @@ class AdapterGenerator:
             kwargs["temperature"] = temperature
         with self.torch.inference_mode():
             output = self.model.generate(**encoded, **kwargs)
-        completion = output[0][encoded["input_ids"].shape[-1] :]
+        completion = output[0][input_tokens:]
         return EvaluationGeneration(
             response=self.tokenizer.decode(completion, skip_special_tokens=True).strip(),
             latency_seconds=round(time.perf_counter() - started, 6),
-            input_tokens=int(encoded["input_ids"].shape[-1]),
+            input_tokens=input_tokens,
             generated_tokens=int(len(completion)),
         )

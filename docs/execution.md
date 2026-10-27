@@ -1,6 +1,6 @@
 # 3-day execution milestones
 
-Status: **M5–M8 experiments and M10 local Gradio smoke completed; Hugging Face publication and container verification are pending**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
+Status: **M5–M10 experiments, review, and local Gradio smoke completed; Hugging Face publication and container verification are pending**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
 
 1. [x] Inspect workspace, create project scope/architecture/decision records.
 2. [x] Python project, tooling, CI-ready tests, local environment.
@@ -10,7 +10,7 @@ Status: **M5–M8 experiments and M10 local Gradio smoke completed; Hugging Face
 6. [x] Configurable LoRA fine-tuning pipeline (real CPU integration verified).
 7. [x] Execute truthful, bounded training experiment.
 8. [x] Base-versus-adapted held-out generation comparison (no automatic quality claim).
-9. [ ] Refine inference controls and examples.
+9. [x] Refine inference controls and examples; inspect all six response pairs.
 10. [x] Gradio app and local HTTP plus real inference smoke test.
 11. [ ] Docker, Space metadata, deployment guide.
 12. [ ] Publish model and Space, verify only if credentials available.
@@ -114,3 +114,9 @@ Status: **M5–M8 experiments and M10 local Gradio smoke completed; Hugging Face
 - The local Hugging Face CLI reported no authenticated account and no `HF_MODEL_REPO` or `HF_SPACE_REPO` environment variables were set. Exact repository IDs and a local `hf auth login` are required to publish; no public model or Space exists from this work yet.
 - Gradio 5.50.0 with Hugging Face Hub 0.36.2 resolved against Transformers 4.57.6. The local UI instantiated successfully, `pip check` found no broken requirements, and a local HTTP plus real adapter inference smoke test returned a nonempty response.
 - Docker Desktop's Linux daemon was unavailable during the build check, so the container itself remains unverified. The public upload and Space build remain pending Hugging Face login and exact repository IDs.
+
+## Inference review
+
+- Milestone 9 — **completed**. Documented a text inspection of all six held-out response pairs in [`qualitative_review.md`](qualitative_review.md). The adapter invented `psutil.memory_profiler`, gave a misleading Git history command, and suggested a premature pod restart. A `KeyError` definition was understandable but incomplete. No quality improvement is claimed.
+- Added a tokenized prompt plus completion preflight limit of 512 tokens, matching the training sequence budget. Longer requests receive a clear error instead of silent truncation. The existing Gradio interface retains its bounded generation controls and four curated example questions.
+- Next: finish deployment verification when Hugging Face authentication and exact repository IDs are available. Docker container verification also remains pending a working Linux daemon.
