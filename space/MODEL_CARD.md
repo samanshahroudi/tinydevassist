@@ -35,6 +35,23 @@ misleading Git guidance, and premature operations advice. See the
 [review](https://github.com/samanshahroudi/tinydevassist/blob/main/docs/qualitative_review.md)
 for the exact cases. These observations do not establish a population error rate.
 
+## Reproduce and use
+
+Clone the [source repository](https://github.com/samanshahroudi/tinydevassist),
+install Python 3.11 dependencies with `python -m pip install -e '.[app,dev]'`,
+and set `HF_MODEL_REPO` to the exact published adapter repository ID before
+running `python app.py`. The demo loads the base at the pinned revision above,
+applies this PEFT adapter, and serves Gradio on port 7860. Its tokenized prompt
+plus requested new tokens must fit the 512-token training sequence budget.
+
+For the reported experiment, regenerate the seed-42 split with
+`python prepare_data.py --seed 42`. The source SHA-256 is
+`92ffc379ffe09d71052d9a7cfc9c9b4fe740c540cb7955e4347e2f646bef151f`;
+the held-out split SHA-256 is
+`706756348bd549ee3db4f453189955b84950760a723751fd287b37134566dde7`.
+The [evaluation protocol](https://github.com/samanshahroudi/tinydevassist/blob/main/docs/evaluation.md)
+explains how to rerun both model paths and inspect the six response pairs.
+
 Load this adapter with PEFT on the pinned base revision. See the
 [source repository](https://github.com/samanshahroudi/tinydevassist) for the
 data card, scripts, configuration, tests, and evaluation protocol.

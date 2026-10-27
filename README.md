@@ -1,6 +1,6 @@
 # TinyDevAssist — tiny developer-support language model
 
-A reproducible small-language-model engineering portfolio project. **Status: bounded CPU baseline, LoRA training, and held-out generation comparison completed; deployment and human quality review remain pending.**
+A reproducible small-language-model engineering portfolio project. **Status: bounded CPU baseline, six-step LoRA training, held-out comparison, text inspection, and a local Gradio smoke test completed. Public Hugging Face deployment remains pending.**
 
 ## Goal
 Adapt `HuggingFaceTB/SmolLM2-360M-Instruct` using LoRA for concise answers to developer-support questions about Git, Python, HTTP APIs, and backend debugging. Compare it with the unchanged base model, then publish a model card and CPU-friendly Gradio Docker Space.
@@ -13,7 +13,7 @@ flowchart LR
   B --> C[Training/validation/test]
   C --> D[LoRA fine-tuning]
   C --> E[Baseline evaluation]
-  D --> F[Adapter / merged model]
+  D --> F[PEFT adapter]
   F --> G[Fine-tuned evaluation]
   F --> H[Gradio Docker Space]
   E --> I[Comparison report]
@@ -24,11 +24,11 @@ See [architecture](docs/architecture.md), [decisions](docs/decisions.md), and [e
 
 ## Reproducibility and limitations
 
-The [seed dataset card](data/DATASET_CARD.md) documents 36 project-authored examples and their license; [model selection](docs/model_selection.md) documents verified upstream metadata. Dependency versions, performance, and runtime artifacts still require verification. **Do not treat this repository as a trained or deployed model yet.** No secrets, checkpoints, model weights, or personal support transcripts belong in Git.
+The [seed dataset card](data/DATASET_CARD.md) documents 36 project-authored examples and their license; [model selection](docs/model_selection.md) documents verified upstream metadata. One bounded CPU adapter-training run and paired evaluation are recorded below; they do not establish generalization or production suitability. Public deployment has not been verified. No secrets, checkpoints, model weights, or personal support transcripts belong in Git.
 
 ## Usage
 
-Training, evaluation, inference, demo, and deployment commands will be added as their implementations are tested. Python 3.11 is the target environment; CUDA is optional for training, while CPU inference is the target for the hosted demo.
+The commands below cover data preparation, baseline inference, training, evaluation, and the local demo. The [deployment guide](docs/deployment.md) gives the publication steps. Python 3.11 is the measured environment; CUDA is optional for training, while CPU inference is the target for the hosted demo.
 
 ## Development environment (Milestone 2)
 
@@ -42,13 +42,13 @@ python -m tinydevassist doctor
 make check
 ```
 
-The `dev`, `train`, and `app` dependency groups are defined in `pyproject.toml`; ML compatibility and lockfile generation await real hardware validation. CI runs lint, formatting, and dependency-free tests only. **No fine-tuning, evaluation, or deployment has happened yet.**
+The `dev`, `train`, and `app` dependency groups are defined in `pyproject.toml`. The measured CPU run used the versions recorded in [training](docs/development.md) and [evaluation](docs/evaluation.md); these are not a cross-platform lockfile. CI runs lint, formatting, and lightweight tests without downloading model weights.
 
 ## Seed data (Milestone 3)
 
 The tracked [`data/samples/developer_support_v1.jsonl`](data/samples/developer_support_v1.jsonl) contains **36 illustrative Q&A records** (6 each for Git, Python, HTTP, APIs, debugging, and operations). These were drafted for this project with language-model assistance, are not real support incidents, and require technical review. See [data provenance and license](data/DATASET_CARD.md). The preparation script now creates deterministic, category-stratified train/validation/test splits; outputs are intentionally ignored by Git.
 
-The candidate base model is [SmolLM2-360M-Instruct](https://huggingface.co/HuggingFaceTB/SmolLM2-360M-Instruct), which the upstream card labels Apache-2.0. This workspace has not downloaded or executed the model; its latency and memory footprint remain unmeasured.
+The base model is [SmolLM2-360M-Instruct](https://huggingface.co/HuggingFaceTB/SmolLM2-360M-Instruct), which the upstream card labels Apache-2.0. It was loaded at the pinned revision and measured on six held-out prompts in one CPU environment, as reported below.
 
 ## Dataset preparation (Milestone 4)
 

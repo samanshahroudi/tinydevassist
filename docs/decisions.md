@@ -135,3 +135,11 @@
 - **Alternatives considered:** Silent prompt truncation, allowing requests beyond the training budget, claiming a quality score from six authored prompts, or showing only favorable generations.
 - **Reason:** A preflight rejection gives users a clear way to shorten the request while preserving their original question. Showing specific failures gives the demo and model card a checkable limitation.
 - **Consequences:** Some longer questions require fewer requested new tokens or cannot be served through the demo. The text inspection is descriptive and cannot estimate generalization or an error rate.
+
+## ADR-018 — Reconcile portfolio documentation with measured evidence
+
+- **Decision:** Replace early planning claims in the README and architecture with the actual bounded CPU experiment status, and add short verbatim response examples and reproducibility hashes to the review and model card.
+- **Context:** Early pages still said that no model had been downloaded, trained, or evaluated, while later pages recorded a six-step training run and paired held-out comparison.
+- **Alternatives considered:** Leave the historical planning text intact, remove the early sections entirely, or claim independent quality from the small authored split.
+- **Reason:** A reader should find one consistent account of what executed, what was measured, and what still requires public verification.
+- **Consequences:** The documentation now distinguishes local experiment evidence from deployment and independent quality validation; it must be updated again when a public Space is actually verified.

@@ -1,6 +1,6 @@
 # 3-day execution milestones
 
-Status: **M5–M10 experiments, review, and local Gradio smoke completed; Hugging Face publication and container verification are pending**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
+Status: **M5–M10 experiments and local Gradio smoke, plus M13 documentation review, completed; Hugging Face publication and container verification are pending**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
 
 1. [x] Inspect workspace, create project scope/architecture/decision records.
 2. [x] Python project, tooling, CI-ready tests, local environment.
@@ -14,7 +14,7 @@ Status: **M5–M10 experiments, review, and local Gradio smoke completed; Huggin
 10. [x] Gradio app and local HTTP plus real inference smoke test.
 11. [ ] Docker, Space metadata, deployment guide.
 12. [ ] Publish model and Space, verify only if credentials available.
-13. [ ] Model card, experiment report, architecture finalization.
+13. [x] Model card, experiment report, architecture finalization.
 14. [ ] CI, cleanup, reproduction instructions, CV bullet.
 15. [ ] Full final verification and audit.
 
@@ -120,3 +120,9 @@ Status: **M5–M10 experiments, review, and local Gradio smoke completed; Huggin
 - Milestone 9 — **completed**. Documented a text inspection of all six held-out response pairs in [`qualitative_review.md`](qualitative_review.md). The adapter invented `psutil.memory_profiler`, gave a misleading Git history command, and suggested a premature pod restart. A `KeyError` definition was understandable but incomplete. No quality improvement is claimed.
 - Added a tokenized prompt plus completion preflight limit of 512 tokens, matching the training sequence budget. Longer requests receive a clear error instead of silent truncation. The existing Gradio interface retains its bounded generation controls and four curated example questions.
 - Next: finish deployment verification when Hugging Face authentication and exact repository IDs are available. Docker container verification also remains pending a working Linux daemon.
+
+## Documentation reconciliation
+
+- Milestone 13 — **completed**. The README and architecture now match the measured CPU baseline, six-step LoRA run, paired comparison, and local Gradio smoke. The qualitative review includes verbatim useful and incorrect adapter excerpts; the model card includes usage instructions, experiment hashes, and the actual quality boundary.
+- The Hugging Face CLI again reported no login and no model or Space repository IDs were configured. Docker Desktop's Linux daemon remained unavailable. No public deployment or container build is claimed.
+- Next: M14 CI and reproducibility audit; M11 container verification and M12 publication remain pending their prerequisites.

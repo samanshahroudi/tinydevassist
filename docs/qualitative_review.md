@@ -23,6 +23,26 @@ suggested `git log --pretty=format:%an` command does not identify a line's
 origin. The adapter should be shown as a limited experiment until a larger,
 independently written prompt set receives expert review.
 
+## Verbatim adapter excerpts
+
+- `python-003`, prompt: “What does KeyError mean when reading a dictionary?”
+  Answer: “A KeyError occurs when you try to access a key in a dictionary that
+  does not exist. It's like trying to find a book with a number that doesn't
+  exist in your library.” This definition is understandable, though it gives
+  no practical recovery step.
+- `debugging-004`, prompt: “How can I identify a memory leak in a service?”
+  Answer excerpt: “Use the `psutil.memory_profiler` function to get the memory
+  usage of the service.” This function does not exist in `psutil`.
+- `git-005`, prompt: “How can I find which commit introduced a line?”
+  Answer excerpt: “Run the following command in your terminal:
+  `git log --oneline --all --pretty=format:%an` ... This command will display
+  the commit hash and the line number where the line was introduced.” That
+  command formats author names and does not identify the line's commit.
+
+The two failure excerpts were cut at sentence boundaries for display; the
+complete responses remain in the ignored experiment report. The model's
+96-token cap truncated some complete responses mid-sentence.
+
 The Gradio demo offers four curated prompts spanning Git, Python imports, HTTP
 timeouts, and missing API resources. These are examples of the interface,
 not endorsements of its answers. The demo now rejects a question if its
