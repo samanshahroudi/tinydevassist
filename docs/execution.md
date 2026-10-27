@@ -1,6 +1,6 @@
 # 3-day execution milestones
 
-Status: **M5–M8 bounded CPU baseline, LoRA, and paired held-out generation comparison completed; deployment and human quality review remain unverified**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
+Status: **M5–M8 experiments and M10 local Gradio smoke completed; Hugging Face publication and container verification are pending**. Progress is checkpointed in Git. Each future session must read Git status, log, active branch, and docs before editing; work on the next unfinished milestone only; test, scan staged diff for secrets/weights, then commit meaningful changes with the configured author. Do not reset or overwrite existing changes.
 
 1. [x] Inspect workspace, create project scope/architecture/decision records.
 2. [x] Python project, tooling, CI-ready tests, local environment.
@@ -11,7 +11,7 @@ Status: **M5–M8 bounded CPU baseline, LoRA, and paired held-out generation com
 7. [x] Execute truthful, bounded training experiment.
 8. [x] Base-versus-adapted held-out generation comparison (no automatic quality claim).
 9. [ ] Refine inference controls and examples.
-10. [ ] Gradio app and smoke tests.
+10. [x] Gradio app and local HTTP plus real inference smoke test.
 11. [ ] Docker, Space metadata, deployment guide.
 12. [ ] Publish model and Space, verify only if credentials available.
 13. [ ] Model card, experiment report, architecture finalization.
@@ -106,3 +106,11 @@ Status: **M5–M8 bounded CPU baseline, LoRA, and paired held-out generation com
 - Reproduced the GitHub failure with the workflow's exact Ruff command on Python 3.11. Fixed UTC alias, import order, notebook import placement, and existing formatting drift across source, tests, and notebooks.
 - The notebook data exploration cell now imports the installed package directly, matching the documented editable install.
 - Verified `python -m ruff check .`, `python -m ruff format --check .`, and the offline test suite locally before commit. This repair does not change model weights or experiment reports.
+- The pushed repair `e9a02c229727af8a2550f40416b9220da3152c48` passed [GitHub Actions run 40577541798](https://github.com/samanshahroudi/tinydevassist/actions/runs/40577541798).
+
+## Deployment preparation
+
+- Added a bounded Gradio interface, public inference smoke script, CPU Docker Space files, model card, and an explicit allowlist publisher. See [`deployment.md`](deployment.md).
+- The local Hugging Face CLI reported no authenticated account and no `HF_MODEL_REPO` or `HF_SPACE_REPO` environment variables were set. Exact repository IDs and a local `hf auth login` are required to publish; no public model or Space exists from this work yet.
+- Gradio 5.50.0 with Hugging Face Hub 0.36.2 resolved against Transformers 4.57.6. The local UI instantiated successfully, `pip check` found no broken requirements, and a local HTTP plus real adapter inference smoke test returned a nonempty response.
+- Docker Desktop's Linux daemon was unavailable during the build check, so the container itself remains unverified. The public upload and Space build remain pending Hugging Face login and exact repository IDs.

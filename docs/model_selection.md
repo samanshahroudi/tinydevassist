@@ -13,12 +13,21 @@
 
 - **TinyLlama 1.1B:** more capacity, but greater CPU memory, latency, and training requirements.
 - **SmolLM2-135M-Instruct:** smaller footprint, but less capacity for even short support answers.
-- **SmolLM2-360M-Instruct:** reasonable size to attempt CPU inference and laptop-scale LoRA fine-tuning, without claiming measured feasibility.
+- **SmolLM2-360M-Instruct:** the selected small model; CPU inference and a six-step LoRA run have since completed.
 
 ## Configuration and reproducibility
 
-`configs/model.json` records the candidate and 512-token experiment length. `revision: main` is **not immutable**; before training, resolve and record the upstream commit SHA, tokenizer files, exact dependency versions, and local hardware. Do not claim pinned reproducibility until that is done.
+`configs/model.json` retains `revision: main` as a convenience default, which
+is **not immutable**. The measured runs explicitly passed upstream commit
+`a10cc1512eabd3dde888204e902eca88bddb4951`; the reports record Python,
+PyTorch, Transformers, and input hashes. Deployment uses the same revision.
 
-## Not yet verified
+## Current runtime boundary
 
-The weights and tokenizer have **not** been downloaded or executed in this workspace. GPU compatibility, CPU inference latency, peak memory, quantization support, and LoRA training success are unknown. The upstream license is verified from metadata; package compatibility and runtime behavior remain future milestones.
+The pinned revision `a10cc1512eabd3dde888204e902eca88bddb4951` and tokenizer
+were downloaded and exercised for CPU baseline inference, bounded LoRA training,
+and paired adapter generation. The six-prompt latency figures and validation
+loss are recorded in [`evaluation.md`](evaluation.md) and
+[`execution.md`](execution.md). GPU compatibility, peak CPU memory,
+quantization, independent response quality, and public serving remain
+unverified.

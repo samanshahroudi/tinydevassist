@@ -40,7 +40,7 @@ app = [
     "torch>=2.5,<3",
     "transformers>=4.48,<5",
     "peft>=0.14,<1",
-    "gradio>=5.12,<7",
+    "gradio>=5.12,<6",
 ]
 
 [project.scripts]

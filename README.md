@@ -140,3 +140,16 @@ measured CPU comparison produced six nonempty outputs from each model; mean
 generation latency was 9.520 seconds for the base and 10.301 seconds for the
 adapter. This is execution evidence only, not a quality winner: see the
 [evaluation protocol and limitations](docs/evaluation.md).
+
+## Local demo and deployment
+
+Install the app dependencies with `python -m pip install -e '.[app]'`, set
+`TINYDEVASSIST_ADAPTER_PATH=checkpoints/tinydevassist-lora`, and run
+`python app.py`. The Gradio interface accepts a question and bounded
+temperature/token controls; `python smoke.py` checks its HTTP endpoint and
+generates one answer. The CPU Docker Space package, model card, exact publish
+steps, and missing credential requirements are in the
+[deployment guide](docs/deployment.md). Public Hugging Face model and Space
+URLs will be added after publication and a real public smoke test.
+
+The CI repair passed [GitHub Actions](https://github.com/samanshahroudi/tinydevassist/actions/runs/40577541798).

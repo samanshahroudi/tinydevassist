@@ -119,3 +119,11 @@
 - **Alternatives considered:** Declaring the lower-loss adapter superior, scoring with an unrelated language model, using a single anecdotal prompt, or skipping comparison until a large benchmark exists.
 - **Reason:** A strict paired generation report validates that both artifacts execute under identical decoding controls, exposes the actual text for review, and preserves an honest boundary around what this data can show.
 - **Consequences:** The first CPU comparison completed all six prompts for both models, but does not select a winner. Independent questions and human technical review remain required before any quality or safety claim.
+
+## ADR-016 — Package the adapter and CPU Space with explicit upload manifests
+
+- **Decision:** Publish the PEFT adapter as a model repository and serve it from a Docker Gradio Space using a pinned base revision and a curated file manifest.
+- **Context:** The local adapter is only a few megabytes, while the base model remains upstream; the project needs a reproducible, CPU oriented demo without committing weights to GitHub. The current Gradio 6 major release requires a Hugging Face Hub dependency incompatible with the measured Transformers 4.57.6 stack.
+- **Alternatives considered:** Commit weights to GitHub, merge and upload a full base model, use a floating base revision, or let an upload command scan the entire local repository.
+- **Reason:** An explicit file list keeps reports, credentials, training arguments, and local caches out of the public repositories. Gradio 5.50.0 and Hugging Face Hub 0.36.2 resolve with the measured Transformers stack; a CPU PyTorch wheel keeps the Docker image focused on CPU serving.
+- **Consequences:** Publication requires authenticated Hugging Face access and exact model and Space repository IDs. Upload success is separate from a healthy Space build and public inference; each must be checked before claiming deployment.

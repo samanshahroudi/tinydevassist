@@ -96,7 +96,13 @@ class AdapterGenerator:
         )
         self.model = PeftModel.from_pretrained(base, adapter_path).to(device).eval()
 
-    def generate(self, prompt: str, *, max_new_tokens: int = 96) -> EvaluationGeneration:
+    def generate(
+        self, prompt: str, *, max_new_tokens: int = 96, temperature: float = 0.0
+    ) -> EvaluationGeneration:
+        if not 1 <= max_new_tokens <= 512:
+            raise ValueError("max_new_tokens must be between 1 and 512")
+        if not 0 <= temperature <= 2:
+            raise ValueError("temperature must be between 0 and 2")
         encoded = self.tokenizer.apply_chat_template(
             prompt_messages(prompt),
             tokenize=True,
@@ -106,14 +112,16 @@ class AdapterGenerator:
         )
         encoded = {name: value.to(self.device) for name, value in encoded.items()}
         started = time.perf_counter()
+        kwargs = {
+            "max_new_tokens": max_new_tokens,
+            "do_sample": temperature > 0,
+            "eos_token_id": self.tokenizer.eos_token_id,
+            "pad_token_id": self.tokenizer.pad_token_id,
+        }
+        if temperature > 0:
+            kwargs["temperature"] = temperature
         with self.torch.inference_mode():
-            output = self.model.generate(
-                **encoded,
-                max_new_tokens=max_new_tokens,
-                do_sample=False,
-                eos_token_id=self.tokenizer.eos_token_id,
-                pad_token_id=self.tokenizer.pad_token_id,
-            )
+            output = self.model.generate(**encoded, **kwargs)
         completion = output[0][encoded["input_ids"].shape[-1] :]
         return EvaluationGeneration(
             response=self.tokenizer.decode(completion, skip_special_tokens=True).strip(),

@@ -34,5 +34,6 @@ and uses only `train` and `validation` rows. The tokenizer chat template
 constructs sequences; system/user tokens and padding are masked (`-100`) from
 the supervised loss. PEFT adapts `q_proj` and `v_proj`, with bounded steps,
 no external metric reporting, and adapter-only saves. The `test` split is
-**not** used for fitting or hyperparameter selection. Runtime model compatibility
-remains unverified until the first actual training run.
+**not** used for fitting or hyperparameter selection. A bounded CPU training run
+and a paired six-prompt generation comparison have now executed. Independent
+quality review and public serving remain to be verified.
